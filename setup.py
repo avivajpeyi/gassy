@@ -4,9 +4,9 @@ import re
 
 from setuptools import find_packages, setup
 
-NAME = "project_name"
-PACKAGES = find_packages(where="project_name")
-META_PATH = os.path.join("project_name", "__init__.py")
+NAME = "gassy"
+PACKAGES = find_packages(where="gassy")
+META_PATH = os.path.join("gassy", "__init__.py")
 INSTALL_REQUIRES = ["numpy", "matplotlib"]
 EXTRA_REQUIRE = {"test": ["pytest>=3.6"]}
 EXTRA_REQUIRE["dev"] = EXTRA_REQUIRE["test"] + [
