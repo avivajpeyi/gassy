@@ -1,3 +1,3 @@
-# Project Name
+# Gassy
 
-Project short description
+GW waveform generator for systems in gaseous environments
