@@ -20,7 +20,7 @@ global M_e;
 
 
 load profile15Msol.mat rho q c_s;
-Rho = rho;  
+Rho = rho;
 q = q*Rsol; c_s = c_s*100;
 R = max(q); q = smooth(q);
 
@@ -98,10 +98,10 @@ if (Mach < 1-h1)
     I = 0.5*log((1+Mach)/(1-Mach)) - Mach;
 else
     if((Mach >= 1-h1) && (Mach < 1 + h))
-        I = 0.5*log((2-h1)/h1) - 1 + h1;    
+        I = 0.5*log((2-h1)/h1) - 1 + h1;
 %         disp('Speed of sound reached');
     else
-        I = 0.5*log(1-1/Mach^2) + log(N);   
+        I = 0.5*log(1-1/Mach^2) + log(N);
         if (Mach < 1)
             disp('Wrong condition');
         end

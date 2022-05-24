@@ -27,7 +27,7 @@ Tend3=1e3
 [X,Y,v_x,v_y,t] = spiralling113MESA15(M,m,a,e,dt,Tend2);%e = 0 always
 % ---------------------------------------------------------------------------
 % [X2,Y2,v_x2,v_y2,t2] = spiralling113MESAsecond(M,m,sqrt(X(end)^2+Y(end)^2),X(end),Y(end),v_x(end),v_y(end),dt,Tend2);
-% 
+%
 % L1 = length(t);
 % L2 = length(t2);
 % X_all = zeros(L1 + L2,1);

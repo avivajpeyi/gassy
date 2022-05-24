@@ -5,7 +5,7 @@ import re
 from setuptools import find_packages, setup
 
 NAME = "gassy"
-PACKAGES = find_packages(where="gassy")
+PACKAGES = find_packages(where=".")
 META_PATH = os.path.join("gassy", "__init__.py")
 INSTALL_REQUIRES = ["numpy", "matplotlib"]
 EXTRA_REQUIRE = {"test": ["pytest>=3.6"]}
@@ -67,4 +67,6 @@ setup(
     classifiers=CLASSIFIERS,
     zip_safe=True,
     entry_points={"console_scripts": []},
+    package_data={NAME: ["stellar_profiles/data/*.mat"]},
+    include_package_data=True,
 )

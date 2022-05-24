@@ -19,7 +19,7 @@ SN_bbo = SN;
 
 %M = 0.6 White dwarf =====================================================
 M = 0.6*Msol;
- 
+
 % 15
 Dt = 1;
 two_five_PN_15;
@@ -121,7 +121,7 @@ SN(5) = SNR;
 SN_dec(5) = SNR_dec;
 SN_bbo(5) = SNR_bbo;
 
-% 5 
+% 5
 two_five_PN_MESA5;
 wave_form_5;
 if (~all(diff(r)))
@@ -191,7 +191,7 @@ SN_dec_puff(2) = SNR_dec;
 SN_bbo_puff(2) = SNR_bbo;
 
 % Dt = 1;
-% 5 
+% 5
 two_five_PN_MESA5_puff;
 wave_form_5_puff;
 if (~all(diff(r)))
@@ -225,7 +225,7 @@ loglog(f_decigo_bbo,sqrt(f_decigo_bbo).*hf_decigo,'k');
 loglog(f_decigo_bbo,sqrt(f_decigo_bbo).*hf_bbo,'k');
 % Dt = 1;
 M = 1.4*Msol;
-%15 
+%15
 two_five_PN_MESA15_puff;
 wave_form_mesa15_puff;
 if (~all(diff(r)))

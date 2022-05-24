@@ -1,8 +1,8 @@
 % Run only after back_reaction_of_gravy_waves. This plots the wave-form as
-% a function of time. 
+% a function of time.
 
 
-kpc = 3.086e21; 
+kpc = 3.086e21;
 % D = 50000*kpc;
 D = 10*kpc;
 c = 29979245800;
@@ -51,13 +51,13 @@ N = R./b_90;
 I = zeros(1,len);
 for j=(1:len)
     if (Mach(j) < 1)
-        I(j) = 0.5*log((1+Mach(j))/(1-Mach(j))) - Mach(j);   
+        I(j) = 0.5*log((1+Mach(j))/(1-Mach(j))) - Mach(j);
     else
         if(Mach(j) == 1)
                 disp('Exactly speed of sound reached');
                 return;
         else
-                I(j) = 0.5*log(1-1/Mach(j)^2) + log(N(j));   
+                I(j) = 0.5*log(1-1/Mach(j)^2) + log(N(j));
         end
     end
 end
