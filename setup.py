@@ -14,6 +14,7 @@ EXTRA_REQUIRE["dev"] = EXTRA_REQUIRE["test"] + [
     "flake8",
     "black<=21.9b0",
     "isort",
+    "deepdiff"
 ]
 
 # END PROJECT SPECIFIC

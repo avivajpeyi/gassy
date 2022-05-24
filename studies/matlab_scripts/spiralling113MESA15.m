@@ -13,10 +13,7 @@ Msol = 1.98855*1e33;
 global rho;
 global C;
 global M_e;
-% load profile8msol.mat logrho logp logr M_e;
-% Rho = 10.^logrho; P = 10.^logp; q = 10.^logr*Rsol;
-% R = max(q);
-% M_ee = M_e*Msol;
+
 
 
 load profile15Msol.mat rho q c_s;
@@ -28,6 +25,7 @@ R = max(q); q = smooth(q);
 %Smoothing
 
 rho = @(r) (r<=R).*real(interp1(q,Rho,r,'linear','extrap')) + (r > R).*0;
+
 C = @(r) abs(interp1(q,c_s,r,'linear','extrap'));
 
 M_e = @(x) (x<=R).*integral(@(r) 4*pi*r.^2.*rho(r),0,x) + (x > R).*integral(@(r) 4*pi*r.^2.*rho(r),0,R);
@@ -42,10 +40,8 @@ L = sqrt(G*(M+m+M_e(a))*a*(1-e^2));
 y0 = [(1+e) 0 0 L*T/(a^2*(1+e))];
 
 %ode113 stuff
-% tspan = (0:dt:Tend);
+
 tspan = [0 Tend]/T;
-% opts = odeset('RelTol',1e-10,'Stats','on');
-% opts = odeset('RelTol',1e-5,'AbsTol',1e-5,'Stats','on','OutputFcn',@odeplot);
 opts = odeset('RelTol',1e-10,'Stats','on');
 
 
@@ -111,12 +107,7 @@ f = I*4*pi*G^2*M^2*rho(a*r)/((a*v/T)^3);
 if (I<0)
     disp('boo');
 end
-% f = 0;
 
-% dydt(1) = y(2);
-% dydt(2) = -4*pi^2*y(1)/r^3 - T*f*y(2)/mu;
-% dydt(3) = y(4);
-% dydt(4) = -4*pi^2*y(3)/r^3 - T*f*y(4)/mu;
 
 
 rdot = (y(1)*y(2) + y(3)*y(4))/r;
@@ -143,13 +134,10 @@ dydt(2) = -4*pi^2*((1+A)*y(1)/r + B*y(2)*a/T)/r^2 - T*f*y(2)/M -4*pi^2*((M_e(a*r
 dydt(3) = y(4);
 dydt(4) = -4*pi^2*((1+A)*y(3)/r + B*y(4)*a/T)/r^2 - T*f*y(4)/M -4*pi^2*((M_e(a*r)-m)/(M+m))*y(3)/r^3;
 
-% if (v*a/T >= 1e-1*c)
-%     disp('Relativistic');
-% end
+
 
 Rt = 1e-1*Rsol*max([(M/m)^(1/3) (m/M)^(1/3)]);
-% Rt = 1e-2*Rsol;
-% Rt = 1e10;
+
 
 if (r*a <= Rt)
     dydt(1) = 0;
