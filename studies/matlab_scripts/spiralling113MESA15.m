@@ -17,6 +17,7 @@ global M_e;
 
 
 load profile15Msol.mat rho q c_s;
+
 Rho = rho;
 q = q*Rsol; c_s = c_s*100;
 R = max(q); q = smooth(q);

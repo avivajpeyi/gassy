@@ -7,14 +7,14 @@ from setuptools import find_packages, setup
 NAME = "gassy"
 PACKAGES = find_packages(where=".")
 META_PATH = os.path.join("gassy", "__init__.py")
-INSTALL_REQUIRES = ["numpy", "matplotlib"]
+INSTALL_REQUIRES = ["numpy", "matplotlib", "astropy", "scipy"]
 EXTRA_REQUIRE = {"test": ["pytest>=3.6"]}
 EXTRA_REQUIRE["dev"] = EXTRA_REQUIRE["test"] + [
     "pre-commit",
     "flake8",
     "black<=21.9b0",
     "isort",
-    "deepdiff"
+    "deepdiff",
 ]
 
 # END PROJECT SPECIFIC
@@ -68,6 +68,6 @@ setup(
     classifiers=CLASSIFIERS,
     zip_safe=True,
     entry_points={"console_scripts": []},
-    package_data={NAME: ["stellar_profiles/data/*.mat"]},
+    package_data={NAME: ["stellar_profiles/data/*.mat", "sensitivity_curves/data/*.mat"]},
     include_package_data=True,
 )

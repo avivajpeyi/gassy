@@ -2,11 +2,57 @@
 [adapted from spiralling113MESA15]
 """
 from typing import Tuple
-from .constants import G, Rsol, Msol
+from .constants import G, Rsol, Msol, pi
 from .stellar_profiles import read_profile
-from .utils import smooth
+from .mat2py import smooth, interp1, integral
+from .conversions import get_period, get_mu, mag
+
+import numpy as np
+
+import matplotlib.pyplot as plt
 
 
+def smooth_rho(r, R, rho, q)->np.float64:
+    """ what is this doing?
+    rho = @(r) (r<=R).*real(interp1(q,Rho,r,'linear','extrap')) + (r > R).*0;
+    """
+    if r<=R:
+        return np.real(interp1(q,rho,r,'linear','extrap'))
+    else:
+        return 0
+
+def smooth_c(r, q, c_s)->np.float64:
+    """ what is this doing?
+    C = @(r) abs(interp1(q,c_s,r,'linear','extrap'));
+    """
+    return np.abs(interp1(q,c_s,r,'linear','extrap'))
+
+
+def smooth_M_e(x, R, rho, q)->np.float64:
+    """ what is this doing?
+    M_e = @(x)
+    (x<=R).*integral(@(r) 4*pi*r.^2.*rho(r),0,x) +
+    (x > R).*integral(@(r) 4*pi*r.^2.*rho(r),0,R);
+    """
+    integrand = lambda r: 4*pi*r**2 * smooth_rho(r, R, rho, q)
+    if x<=R:
+        return x * integral(integrand, 0, x)
+    else:
+        return x * integral(integrand, 0, R)
+
+def get_evolution_initial_conditions(M, m, a, e, mesa_profile_name):
+    profile = read_profile(mesa_profile_name)
+    rho = profile.rho
+    q = profile.q * Rsol # conversion to cgs
+    c_s = profile.c_s * 100 # conversion to cgs (i think?)
+    R = max(q)
+    q = smooth(q)
+    M_e = smooth_M_e(a, R, rho, q)
+
+    T = get_period(M,m,a)
+    L = np.sqrt(G*(M+m+M_e*a*(1-e**2)))
+    y0 = [(1+e), 0, 0, L*T/(a**2*(1+e))]
+    return T, y0
 
 def evolve_bodies(M, m, a, e, dt, Tend, mesa_profile_name)->Tuple:
     """
@@ -30,143 +76,121 @@ def evolve_bodies(M, m, a, e, dt, Tend, mesa_profile_name)->Tuple:
     """
 
     X, Y, v_x, v_y, t = None, None, None, None, None
+    T, y0 = get_evolution_initial_conditions(M, m, a, e, mesa_profile_name)
 
-    #Dynamical friction law
+    tspan = [0, Tend]/T;
+    opts = odeset('RelTol',1e-10,'Stats','on');
 
-    profile = read_profile(mesa_profile_name)
-    rho = profile.rho
-    q = profile.q * Rsol
-    c_s = profile.c_s * 100
-    R = max(q)
-    q = smooth(q)
+    # Integrator
+    # [t,y] = ode113(@odefun,tspan,y0,opts);
 
-
-    #     %Smoothing
-    #
-    #     rho = @(r) (r<=R).*real(interp1(q,Rho,r,'linear','extrap')) + (r > R).*0;
-    #     C = @(r) abs(interp1(q,c_s,r,'linear','extrap'));
-    #
-    #     M_e = @(x) (x<=R).*integral(@(r) 4*pi*r.^2.*rho(r),0,x) + (x > R).*integral(@(r) 4*pi*r.^2.*rho(r),0,R);
-    #
-    #
-    #     % -------------------------------------------------------------------------
-    #
-    #     %initial conditions
-    #     T2 = 4*pi^2*a^3/(G*(M+m));
-    #     T = sqrt(T2);
-    #     L = sqrt(G*(M+m+M_e(a))*a*(1-e^2));
-    #     y0 = [(1+e) 0 0 L*T/(a^2*(1+e))];
-    #
-    #     %ode113 stuff
-    #
-    #     tspan = [0 Tend]/T;
-    #     opts = odeset('RelTol',1e-10,'Stats','on');
-    #
-    #
-    #     %Integrator
-    #     [t,y] = ode113(@odefun,tspan,y0,opts);
-    #
-    #
-    #     X = a*y(:,1);
-    #     Y = a*y(:,3);
-    #     v_x = a*y(:,2)/T;
-    #     v_y = a*y(:,4)/T;
-    #     t = t*T;
-    # end
+    # unpack and return data
+    X = a*data[1,:]
+    v_x = a*data[2,:]/T
+    Y = a*data[3,:]
+    v_y = a*data[4,:]/T
+    t = t*T;
     return X, Y, v_x, v_y, t
 
 
-def odefun(t,y):
-    dydt = None
-    #     dydt = zeros(1,4)';
-    #     %parameters
-    #     G = 6.67e-8;
-    #     c = 29979245800;
-    #     Msol = 1.98855*1e33;
-    #     Rsol = 696342*1e5;
-    #     R = 111.3642*Rsol;
-    #     M=15*Msol;
-    #     % M = 1.4*Msol;
-    #     m = 1*Msol;
-    #     mu = M*m/(M+m);
-    #     a = 0.7*R;
-    #     T = sqrt(4*pi^2*a^3/(G*(M+m)));
-    #
-    #
-    #     global rho;
-    #     global C;
-    #     global M_e;
-    #
-    #     r = sqrt(y(1)^2 + y(3)^2);
-    #     v = sqrt(y(2)^2 + y(4)^2);
-    #
-    #     b_90 = max([G*M/(v*a/T)^2 1e-1*Rsol]);
-    #     N = R/b_90;
-    #
-    #     c_s = C(a*r);
-    #     Mach = (v*a/T)/c_s;
-    #     % Note f is cut at 1 so as not to diverge
-    #     h1 = max([1/N 1e-2]);
-    #
-    #     h = (1-(2-h1)*exp(-2+2*h1)/(N^2*h1))^(-1/2) - 1;
-    #
-    #     %Ostriker
-    #     if (Mach < 1-h1)
-    #         I = 0.5*log((1+Mach)/(1-Mach)) - Mach;
-    #     else
-    #         if((Mach >= 1-h1) && (Mach < 1 + h))
-    #             I = 0.5*log((2-h1)/h1) - 1 + h1;
-    #     %         disp('Speed of sound reached');
-    #         else
-    #             I = 0.5*log(1-1/Mach^2) + log(N);
-    #             if (Mach < 1)
-    #                 disp('Wrong condition');
-    #             end
-    #         end
-    #     end
-    #     f = I*4*pi*G^2*M^2*rho(a*r)/((a*v/T)^3);
-    #     if (I<0)
-    #         disp('boo');
-    #     end
-    #
-    #
-    #
-    #     rdot = (y(1)*y(2) + y(3)*y(4))/r;
-    #     rdot = rdot*a/T;
-    #     nu = mu/(M+m);
-    #
-    #     v = a*v/T;
-    #     r = a*r;
-    #
-    #     A = 1/c^2*(-3*rdot^2*nu/2 + v^2 + 3*nu*v^2 - G*(M+m)*(4+2*nu)/r) + ...
-    #         1/c^4*(15*rdot^4*nu/8 - 45*rdot^4*nu^2/8 - 9*rdot^2*nu*v^2/2 + 6*rdot^2*nu^2*v^2 + 3*nu*v^4 - 4*nu^2*v^4 +...
-    #        G*(M+m)/r*(-2*rdot^2 - 25*rdot^2*nu -2*rdot^2*nu^2 - 13*nu*v^2/2 + 2*nu^2*v^2) + ...
-    #        (G*(M+m)/r)^2*(9 + 87*nu/4) ) + ...
-    #         1/c^5*(-24*nu*rdot*v^2*G*(M+m)/(5*r) - (136*rdot*nu/15)*(G*(M+m)/r)^2);
-    #
-    #     B = 1/c^2*(-4*rdot + 2*rdot*nu) + ...
-    #         1/c^4*(9*rdot^3*nu/2 + 3*rdot^3*nu^2 -15*rdot*nu*v^2/2 - 2*rdot*nu^2*v^2 + G*(M+m)/r*(2*rdot + 41*rdot*nu/2 + 4*rdot*nu^2)) + ...
-    #         1/c^5*((8*nu*v^2/5)*G*(M+m)/r + 24*nu/5*(G*(M+m)/r)^2);
-    #
-    #     r = r/a;
-    #
-    #     dydt(1) = y(2);
-    #     dydt(2) = -4*pi^2*((1+A)*y(1)/r + B*y(2)*a/T)/r^2 - T*f*y(2)/M -4*pi^2*((M_e(a*r)-m)/(M+m))*y(1)/r^3;
-    #     dydt(3) = y(4);
-    #     dydt(4) = -4*pi^2*((1+A)*y(3)/r + B*y(4)*a/T)/r^2 - T*f*y(4)/M -4*pi^2*((M_e(a*r)-m)/(M+m))*y(3)/r^3;
-    #
-    #
-    #
-    #     Rt = 1e-1*Rsol*max([(M/m)^(1/3) (m/M)^(1/3)]);
-    #
-    #
-    #     if (r*a <= Rt)
-    #         dydt(1) = 0;
-    #         dydt(2) = 0;
-    #         dydt(3) = 0;
-    #         dydt(4) = 0;
-    #         disp(t*T);
-    #     end
-    #
-    # end
+def odefun(t,data, M, m, a, orig_c_s, q, orig_rho, R):
+    dydt = np.zeros(4)
+
+    M=M*Msol
+    m = m*Msol
+    mu = get_mu(M,m)
+    T = get_period(M,m,a)
+
+
+    x, y = data[0], data[2]
+    v_x, v_y = data[1], data[3]
+
+    r = mag([x,y])
+    v = mag([v_x, v_y])
+    c_s = smooth_c(a*r, q, orig_c_s)
+    rho = smooth_rho(a*r, R, orig_rho, q)
+    M_e = smooth_M_e(a*r, R, orig_rho, q)
+
+    # TODO: what is this?
+    b_90 = max([G*M/(v*a/T)**2, 1e-1*Rsol])
+    N = R/b_90;
+
+    # TODO: what is this?
+    Mach = (v*a/T)/c_s
+
+    # TODO: what is this?
+    # Note f is cut at 1 so as not to diverge
+    h1 = max([1/N, 1e-2]);
+    h = (1-(2-h1)*np.exp(-2+2*h1)/(N**2*h1))**(-1/2) - 1
+
+    # Ostriker # TODO: what is this?
+    if Mach < 1-h1:
+        I = 0.5*log((1+Mach)/(1-Mach)) - Mach
+    else:
+        if((Mach >= 1-h1) and (Mach < 1 + h)):
+            I = 0.5*np.log((2-h1)/h1) - 1 + h1
+            print('Speed of sound reached')
+        else:
+            I = 0.5*log(1-1/Mach^2) + log(N)
+            if (Mach < 1):
+                print('Wrong condition')
+
+    # TODO: what is this?
+    f = I*4*pi*G**2*M**2*rho/((a*v/T)**3)
+    if (I<0):
+        print('boo') # TODO: am i raising an error?
+
+    rdot = (x*v_x + y*v_y)/r
+    rdot = rdot*a/T
+    nu = mu/(M+m)
+
+    v = a*v/T
+    r = a*r
+
+
+    c2 = c**2
+    c4 = c**4
+    c5 = c**5
+    v2 = v**2
+    rdot2 = rdot**2
+    rdot3 = rdot**3
+    rdot4 = rdot**4
+    nu2 = nu**2
+    GMmr = G*(M+m)/r
+    GMmr2 = (GMm/r)**2
+    pi2 = pi**2
+
+    # TODO: what is this? where are these numbers coming from?
+    A = 1/c2*(-3*rdot2*nu/2 + v2 + 3*nu*v2 - G*(M+m)*(4+2*nu)/r) +\
+        1/c4*(15*rdot4*nu/8 - 45*rdot4*nu2/8 - 9*rdot2*nu*v2/2 + 6*rdot2*nu2*v2 + 3*nu*v4 - 4*nu2*v4 +\
+        GMmr*(-2*rdot2 - 25*rdot2*nu -2*rdot2*nu2 - 13*nu*v2/2 + 2*nu2*v2) +\
+        GMmr2*(9 + 87*nu/4) ) + \
+        1/c5*(-24*nu*rdot*v2*GMmr/5 - (136*rdot*nu/15)*GMmr2)
+
+    B = 1/c2*(-4*rdot + 2*rdot*nu) +\
+        1/c4*(9*rdot3*nu/2 + 3*rdot3*nu2 -15*rdot*nu*v2/2 - 2*rdot*nu2*v2 + GMmr*(2*rdot + 41*rdot*nu/2 + 4*rdot*nu2)) + \
+        1/c5*((8*nu*v2/5)*GMmr + 24*nu/5*GMmr2)
+
+
+    r = r/a
+
+
+    # wut mate?
+    dydt[0] = y
+    dydt[1] = -4*pi2*((1+A)*x/r + B*v_x*a/T)/r2 - T*f*v_x/M -4*pi2*((M_e-m)/(M+m))*x/r3
+    dydt[2] = v_y
+    dydt[3] = -4*pi2*((1+A)*y/r + B*v_y*a/T)/r2 - T*f*v_y/M -4*pi2*((M_e-m)/(M+m))*y/r3
+
+
+
+    Rt = 1e-1*Rsol*max([(M/m)**(1/3), (m/M)**(1/3)]);
+
+
+    if (r*a <= Rt):
+        dydt[0] = 0;
+        dydt[1] = 0;
+        dydt[2] = 0;
+        dydt[3] = 0;
+        print(t*T);
+
     return dydt

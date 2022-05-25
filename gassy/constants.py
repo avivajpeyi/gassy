@@ -1,6 +1,10 @@
 """constants in cgs"""
-G = 6.67e-8
-c = 29979245800
-Rsol = 696342*1e5
-Msol = 1.98855*1e33
-AU = 14959787070000
+import numpy as np
+from astropy.constants import G, M_sun, R_sun, au, c
+
+G = G.cgs.value
+c = c.cgs.value
+Rsol = R_sun.cgs.value
+Msol = M_sun.cgs.value
+AU = au.cgs.value
+pi = np.pi
