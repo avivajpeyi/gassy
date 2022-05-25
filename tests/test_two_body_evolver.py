@@ -10,8 +10,8 @@ from gassy.constants import G, Msol, Rsol, pi
 from gassy.mat2py import smooth
 from gassy.stellar_profiles import read_profile
 from gassy.two_body_evolver import (evolve_bodies,
-                                    get_evolution_initial_conditions,
-                                    smooth_M_e, smooth_rho, odefun)
+                                    get_evolution_initial_conditions, odefun,
+                                    smooth_M_e, smooth_rho)
 
 VISUAL_COMPARISONS = False
 
@@ -89,5 +89,15 @@ class TestStringMethods(unittest.TestCase):
         q = profile.q * Rsol  # conversion to cgs
         R = max(q)
         q = smooth(q)
-        dydx = odefun(t=0,data=[1, 0, 0, 44.4169], M=15, m=1, a=0.7*R, orig_c_s=profile.c_s, q=q, orig_rho=rho, R=R)
+        dydx = odefun(
+            t=0,
+            data=[1, 0, 0, 44.4169],
+            M=15,
+            m=1,
+            a=0.7 * R,
+            orig_c_s=profile.c_s,
+            q=q,
+            orig_rho=rho,
+            R=R,
+        )
         print(dydx)

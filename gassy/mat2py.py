@@ -1,10 +1,12 @@
 """Matlab functions in python"""
-import numpy as np
 from typing import Optional
-from scipy.interpolate import interp1d
-from scipy.integrate import quad
 
-def smooth(a:np.array,WSZ:Optional[int]=5)->np.array:
+import numpy as np
+from scipy.integrate import quad
+from scipy.interpolate import interp1d
+
+
+def smooth(a: np.array, WSZ: Optional[int] = 5) -> np.array:
     """Python implementation of Matlab's `smooth` function
 
     Ref: https://stackoverflow.com/questions/40443020/
@@ -17,13 +19,11 @@ def smooth(a:np.array,WSZ:Optional[int]=5)->np.array:
         1d np.array: smoothed data
 
     """
-    avg = np.convolve(a,np.ones(WSZ,dtype=int),'valid')/WSZ
-    r = np.arange(1,WSZ-1,2)
-    start = np.cumsum(a[:WSZ-1])[::2]/r
-    stop = (np.cumsum(a[:-WSZ:-1])[::2]/r)[::-1]
-    return np.concatenate((  start , avg, stop  ))
-
-
+    avg = np.convolve(a, np.ones(WSZ, dtype=int), "valid") / WSZ
+    r = np.arange(1, WSZ - 1, 2)
+    start = np.cumsum(a[: WSZ - 1])[::2] / r
+    stop = (np.cumsum(a[:-WSZ:-1])[::2] / r)[::-1]
+    return np.concatenate((start, avg, stop))
 
 
 def interp(vector, factor):
@@ -50,7 +50,7 @@ def interp(vector, factor):
     return y_interpolated
 
 
-def interp1(x,v,xq,method='linear',extrapolation='extrap'):
+def interp1(x, v, xq, method="linear", extrapolation="extrap"):
     """
     vq = interp1(x,v,xq,method,extrapolation) specifies a strategy for
     evaluating points that lie outside the domain of x.
@@ -61,13 +61,14 @@ def interp1(x,v,xq,method='linear',extrapolation='extrap'):
     in which case, interp1 returns that value for
     all points outside the domain of x.
     """
-    f = interp1d(x, v, kind='linear', fill_value='extrapolate')
+    f = interp1d(x, v, kind="linear", fill_value="extrapolate")
     return f(xq)
+
 
 def integral(fun, xmin, xmax):
     """
     https://au.mathworks.com/help/matlab/ref/integral.html
     https://docs.scipy.org/doc/scipy/tutorial/integrate.html
     """
-    val, err = quad(fun, xmin, xmax) #, args=fun_args)
+    val, err = quad(fun, xmin, xmax)  # , args=fun_args)
     return val

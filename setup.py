@@ -68,6 +68,8 @@ setup(
     classifiers=CLASSIFIERS,
     zip_safe=True,
     entry_points={"console_scripts": []},
-    package_data={NAME: ["stellar_profiles/data/*.mat", "sensitivity_curves/data/*.mat"]},
+    package_data={
+        NAME: ["stellar_profiles/data/*.mat", "sensitivity_curves/data/*.mat"]
+    },
     include_package_data=True,
 )
