@@ -1,8 +1,9 @@
 
 n_start = 300;
 if (indic == 1)
-    n_start = find(t<=0.9*t(end),1,'last');
+     n_start = find(t<=0.9*t(end),1,'last');
 end
+
 signal = 0.5*(1+cos(i)^2)*cos(2*phi0)*h_plus + cos(i)*sin(2*phi0)*h_cross;
 % sign = interp1(t,signal,(t(n_start):Dt:t(end)),'linear','extrap');
 % h = fft(sign)';
@@ -14,7 +15,7 @@ signal = 0.5*(1+cos(i)^2)*cos(2*phi0)*h_plus + cos(i)*sin(2*phi0)*h_cross;
 % freq(floor(L/2+1):end) = [];
 
 [S,Sig,freq,L,df] = fourier_bit(n_start,Dt,signal,t);
-load Lisa.mat f hf;
+load lisa.mat f hf;
 S_n = @(x) interp1(f,hf.^2,x,'linear','extrap');
 
 % Integral

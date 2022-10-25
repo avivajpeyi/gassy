@@ -5,6 +5,8 @@ import re
 import pandas as pd
 from scipy.io import loadmat
 
+from gassy import constants
+
 HERE = os.path.abspath(os.path.dirname(__file__))
 RE = "/profile(.*?).mat"
 
@@ -30,5 +32,9 @@ def read_profile(profile_name: str) -> pd.DataFrame:
     profile = loadmat(profile_paths[profile_name])
     params = ["c_s", "q", "rho"]
     profile = {p: profile[p].flatten() for p in params}
+    data = pd.DataFrame(profile)
+    data["c_s"] = data["c_s"] * 100  # convert to cgs (i think?) #TODO: check with evgeni
+    data["q"] = data['q'] * constants.Rsol  # convert to cgs
+    return data
 
-    return pd.DataFrame(profile)
+

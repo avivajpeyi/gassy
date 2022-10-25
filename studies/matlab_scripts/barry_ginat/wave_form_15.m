@@ -1,3 +1,5 @@
+%% FUNCTION TO GENERATE GW SIGNAL FROM 2-BODY EVOL (need X, Y) 
+
 % Run only after back_reaction_of_gravy_waves. This plots the wave-form as
 % a function of time.
 
@@ -10,7 +12,7 @@ G = 6.67e-8;
 Me = 15*Msol;
 rg = 2*G*Me/c^2;
 mu = M*m/(M+m);
-phi0=0.7
+phi0=0.7;
 
 x = X; y = Y;
 
@@ -95,3 +97,12 @@ h_plus = G/(D*c^4)*( M_ddot11.*((cos(phi)).^2 - (sin(phi)).^2*(cos(i))^2) + M_dd
 h_cross =  G/(D*c^4)*( ( M_ddot11 - M_ddot22).*sin(2*phi)*cos(i) + 2*M_ddot12.*cos(2*phi)*cos(i));
 
 h_plus_av = G/(D*c^4)*( M_ddot11.*(pi - pi^2/2) + M_ddot22.*(pi - pi^2/2));
+
+
+out = struct('h_plus', h_plus, 'h_cross', h_cross, 'h_plus_av', h_plus_av);
+save('waveform_data', 'out');
+
+
+
+
+

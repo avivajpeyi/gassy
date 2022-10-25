@@ -1,6 +1,6 @@
 global M;
 Msol = 1.98855*1e33;
-load Lisa.mat f hf;
+load lisa.mat f hf;
 loglog(f,sqrt(f).*hf,'k');
 hold on;
 f_decigo_bbo = linspace(1e-3,5e1,1e3);

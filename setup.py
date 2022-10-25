@@ -7,7 +7,7 @@ from setuptools import find_packages, setup
 NAME = "gassy"
 PACKAGES = find_packages(where=".")
 META_PATH = os.path.join("gassy", "__init__.py")
-INSTALL_REQUIRES = ["numpy", "matplotlib", "astropy", "scipy"]
+INSTALL_REQUIRES = ["numpy", "matplotlib", "astropy", "scipy", "pandas"]
 EXTRA_REQUIRE = {"test": ["pytest>=3.6"]}
 EXTRA_REQUIRE["dev"] = EXTRA_REQUIRE["test"] + [
     "pre-commit",

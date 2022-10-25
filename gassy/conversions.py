@@ -12,4 +12,4 @@ def get_mu(M, m):
 
 
 def mag(x):
-    return np.sqrt([xi**2 for xi in x])
+    return np.linalg.norm(x)
