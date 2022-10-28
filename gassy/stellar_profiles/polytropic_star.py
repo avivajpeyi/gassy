@@ -87,9 +87,17 @@ class PolytropicStar:
 
         return np.abs(r), np.abs(rho), np.abs(P), np.abs(m)
 
+
+    def c_s(self):
+        gamma = 1. + 1. / self.n
+        return np.sqrt(gamma * self.P / self.rho)
+
+
+
+
     def plot_profile(self, ax=None, **kwargs):
         if ax is None:
-            fig, ax = plt.subplots(1, 4, figsize=(16, 4))
+            fig, ax = plt.subplots(1, 5, figsize=(18, 4))
 
         ax[0].plot(self.r, self.rho)
         ax[0].set_xlabel(r'$\xi$')
@@ -121,6 +129,12 @@ class PolytropicStar:
         ax[3].set_yscale('log')
         ax[3].set_xlim(0, self.MaxR)
 
+        ax[4].plot(self.r / Rsol, self.c_s(), **kwargs)
+        ax[4].set_ylabel(r'$c_s\ [cm/s]$')
+        ax[4].set_xlabel("$r\ [R_{\odot}]$")
+        ax[4].set_yscale('log')
+        ax[4].set_xlim(0, self.MaxR)
+        
         return ax
 
     @staticmethod
@@ -176,7 +190,7 @@ class PolytropicStar:
 
 
 if __name__ == '__main__':
-    fig, ax = plt.subplots(1, 4, figsize=(14, 4))
+    fig, ax = plt.subplots(1, 5, figsize=(16, 4))
     for i, n in enumerate(np.arange(1, 5, 0.25)):
         profile = PolytropicStar(n, 1, 1)
         profile.plot_profile(ax=ax, label=f'n={n:.2f}', color=f'C{i}')
