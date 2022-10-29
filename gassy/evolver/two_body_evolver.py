@@ -83,3 +83,7 @@ if __name__ == '__main__':
     two_body_system = TwoBodySystem(m=1, M=1.5e7, init_x=1, init_vy=1, drag_coeff=0.01)
     two_body_evolver = TwoBodyEvolver(two_body_system, 0.1)
     two_body_evolver.plot_diagnostic("drag_0_1.png")
+
+    two_body_system = TwoBodySystem(m=1, M=1.5e7, init_x=1, init_vy=1, drag_coeff=0.07)
+    two_body_evolver = TwoBodyEvolver(two_body_system, 0.1)
+    two_body_evolver.plot_diagnostic("drag_0_7.png")
