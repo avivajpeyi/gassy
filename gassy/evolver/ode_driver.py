@@ -1,5 +1,8 @@
 """
 Monkeypatching the ODE solver to add a progress bar
+
+#TODO: doenst work for ODEInt
+#TODO: add option for progress bar
 """
 from scipy.integrate import solve_ivp, odeint
 from scipy.integrate._ivp.base import OdeSolver  # this is the class we will monkey patch
@@ -46,4 +49,8 @@ def ode_driver(fun, t, y0, args=(), **kwargs):
     """
     Wrapper for scipy.integrate.solve_ivp that adds a progress bar.
     """
+    if 'rtol' not in kwargs:
+        kwargs['rtol'] = 1e-12
+    if 'atol' not in kwargs:
+        kwargs['atol'] = 1e-12
     return odeint(fun, y0, t, args=args, **kwargs)

@@ -11,5 +11,5 @@ def get_mu(M, m):
     return M * m / (M + m)
 
 
-def mag(x):
-    return np.linalg.norm(x)
+def mag(x, axis=None):
+    return np.linalg.norm(x, axis=axis)
