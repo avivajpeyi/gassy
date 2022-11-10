@@ -1,5 +1,5 @@
-import matplotlib.pyplot as plt
 import numpy as np
+
 from .plotter import plot_diagnostic
 
 
@@ -48,9 +48,8 @@ class TwoBodyHistory:
             mass_moment=data["mass_moment"],
             Ek=data["kinetic_energy"],
             Egpe=data["gravitational_energy"],
-            L=data['angular_momentum']
+            L=data["angular_momentum"],
         )
-
 
     @classmethod
     def from_ode_out(cls, y: np.ndarray, t: np.ndarray):
@@ -62,10 +61,8 @@ class TwoBodyHistory:
             Egpe=y[:, 5],
             L=y[:, 6],
             mass_moment=y[:, 7:11],
-            time=t
+            time=t,
         )
 
     def plot(self, save_fname=""):
         plot_diagnostic(self.pos, self.Ek, self.Egpe, save_fname=save_fname)
-
-

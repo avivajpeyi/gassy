@@ -2,14 +2,15 @@ import os
 import shutil
 import unittest
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pytest
 
-from gassy.constants import Msol, Rsol
-from gassy.stellar_profiles import (StellarProfile,
-                                    get_smooth_profile_functions, read_profile)
+from gassy.stellar_profiles import (
+    StellarProfile,
+    get_smooth_profile_functions,
+    read_profile,
+)
 
 CLEANUP = False
 

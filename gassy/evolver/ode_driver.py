@@ -5,8 +5,9 @@ Monkeypatching the ODE solver to add a progress bar
 #TODO: add option for progress bar
 """
 from scipy.integrate import odeint, solve_ivp
-from scipy.integrate._ivp.base import \
-    OdeSolver  # this is the class we will monkey patch
+from scipy.integrate._ivp.base import (  # this is the class we will monkey patch
+    OdeSolver,
+)
 from tqdm import tqdm
 
 # save the old methods - we still need them

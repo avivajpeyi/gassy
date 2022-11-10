@@ -1,11 +1,10 @@
 import warnings
 from enum import Enum
-from typing import Optional, Tuple, Union
+from typing import Optional
 
 import numpy as np
 
-from gassy.constants import G, Msol, Rsol, c, pi
-from gassy.conversions import get_mu, get_period, mag
+from gassy.constants import G, pi
 
 
 class OrbitType(Enum):
@@ -15,12 +14,12 @@ class OrbitType(Enum):
 
 class TwoBodySystem:
     def __init__(
-            self,
-            m: float,
-            M: float,
-            init_x: float,
-            init_vy: float,
-            drag_coeff: Optional[float] = None,
+        self,
+        m: float,
+        M: float,
+        init_x: float,
+        init_vy: float,
+        drag_coeff: Optional[float] = None,
     ):
         """
         :param m: mass of the smaller body (kg)
@@ -39,7 +38,8 @@ class TwoBodySystem:
         self.init_y = self.pack_data()
         if mag(self.v) > self.escape_vel:
             warnings.warn(
-                f"Initial Vel {mag(self.v)} > escape vel ({self.escape_vel:.3f})-- are the init conditions correct?")
+                f"Initial Vel {mag(self.v)} > escape vel ({self.escape_vel:.3f})-- are the init conditions correct?"
+            )
 
         if self.orbit_type == OrbitType.UNBOUND:
             warnings.warn("Unbound orbit -- are the init conditions correct?")
@@ -72,16 +72,16 @@ class TwoBodySystem:
     @property
     def period(self) -> float:
         m, M, a = (self.m, self.Me, self.rmag)
-        return np.sqrt((4 * pi ** 2) * (a ** 3) / (G * (M + m)))
+        return np.sqrt((4 * pi**2) * (a**3) / (G * (M + m)))
 
     @property
     def gravitational_force(self) -> np.ndarray:
-        f_mag = -G * self.m * self.M / self.rmag ** 2
+        f_mag = -G * self.m * self.M / self.rmag**2
         return f_mag * self.rhat
 
     @property
     def drag_force(self) -> np.ndarray:
-         return -self.drag_coeff * self.vhat
+        return -self.drag_coeff * self.vhat
 
     @property
     def net_force(self) -> np.ndarray:
@@ -101,10 +101,10 @@ class TwoBodySystem:
         """ddot M"""
         q = np.zeros(4)
         x, y, vx, vy, ax, ay = np.concatenate([self.r, self.v, self.accel])
-        q[0] = 2 * (x * ax + vx ** 2)
+        q[0] = 2 * (x * ax + vx**2)
         q[1] = x * ay + y * ax + 2 * vx * vy
         q[2] = q[1]
-        q[3] = 2 * (y * ay + vy ** 2)
+        q[3] = 2 * (y * ay + vy**2)
         return q * self.mu
 
     @property
@@ -121,7 +121,9 @@ class TwoBodySystem:
 
     def pack_data(self) -> np.ndarray:
         """Returns [x, y, vx, vy, Ek, Egpe, L, M00 M01 M10, M11]"""
-        return np.array([*self.r, *self.v, self.Ek, self.Egpe, self.L, *self.mass_moment])
+        return np.array(
+            [*self.r, *self.v, self.Ek, self.Egpe, self.L, *self.mass_moment]
+        )
 
     @property
     def label(self):
@@ -138,8 +140,12 @@ class TwoBodySystem:
     @property
     def Ek(self) -> float:
         """Kinetic Energy"""
-        return 0.5 * self.m * self.vmag ** 2
+        return 0.5 * self.m * self.vmag**2
 
     @property
     def L(self) -> float:
         return self.m * np.cross(self.r, self.v)
+
+
+def mag(x, axis=None):
+    return np.linalg.norm(x, axis=axis)

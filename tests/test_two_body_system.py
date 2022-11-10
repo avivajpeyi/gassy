@@ -1,5 +1,6 @@
-from gassy.two_body.two_body_system import TwoBodySystem, OrbitType
 import numpy as np
+
+from gassy.two_body.two_body_system import OrbitType, TwoBodySystem
 
 
 def test_force():

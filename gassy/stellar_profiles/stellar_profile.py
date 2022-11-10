@@ -4,8 +4,7 @@ import numpy as np
 from scipy.interpolate import interp1d
 
 from gassy.stellar_profiles.parser import read_profile
-from gassy.stellar_profiles.plotter import (plot_1d_profile_data,
-                                            plot_desnity_grid)
+from gassy.stellar_profiles.plotter import plot_1d_profile_data, plot_desnity_grid
 from gassy.stellar_profiles.polytropic_star import PolytropicStar
 
 

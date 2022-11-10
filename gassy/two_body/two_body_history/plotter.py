@@ -36,7 +36,7 @@ def plot_orbit(pos, ax=None, save_fname=None):
     ax.scatter(0, 0, marker="*", color="red")
 
     # max pos
-    r = np.max(np.sqrt(np.einsum('ij,ij->i', pos, pos)))
+    r = np.max(np.sqrt(np.einsum("ij,ij->i", pos, pos)))
     ax.set_xlim(-r, r)
     ax.set_ylim(-r, r)
 

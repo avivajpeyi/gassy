@@ -1,11 +1,11 @@
 import os
+import shutil
 import unittest
 
 from gassy.evolver.two_body_evolver import TwoBodyEvolver, TwoBodySystem
 
 DIR = os.path.abspath(os.path.dirname(__file__))
 
-import shutil
 
 CLEANUP = False
 
