@@ -1,8 +1,12 @@
-from typing import Tuple, Callable, Optional
-from scipy.interpolate import interp1d
-from gassy.stellar_profiles.parser import read_profile
-from gassy.stellar_profiles.plotter import plot_1d_profile_data, plot_desnity_grid
+from typing import Callable, List, Optional, Tuple
+
 import numpy as np
+from scipy.interpolate import interp1d
+
+from gassy.stellar_profiles.parser import read_profile
+from gassy.stellar_profiles.plotter import (plot_1d_profile_data,
+                                            plot_desnity_grid)
+from gassy.stellar_profiles.polytropic_star import PolytropicStar
 
 
 class StellarProfile:
@@ -24,39 +28,51 @@ class StellarProfile:
         profile = read_profile(profile_name)
         return cls(profile.q, profile.rho, profile.c_s)
 
-    def _build_rho_interp(self, q, rho):
+    @classmethod
+    def load_polytropic_profile(cls, n, mass=1, radius=1):
+        star = PolytropicStar(n=n, mass=1, radius=1)
+        return cls(star.r, star.rho, star.c_s)
+
+    def _build_rho_interp(self, q, rho) -> Tuple[interp1d, List[float]]:
         rho_interp = interp(q, rho)
         rho_range = (rho_interp(self.minr), rho_interp(self.R))
         return rho_interp, rho_range
 
-    def _build_M_e_interp(self, q):
+    def _build_M_e_interp(self, q) -> Tuple[interp1d, List[float]]:
         integrand = 4 * np.pi * np.power(q, 2) * self.rho(q)
-        m = np.array([np.trapz(integrand[0:i], x=self.q[0:i]) for i in range(2, len(integrand) + 1)])
+        m = np.array(
+            [
+                np.trapz(integrand[0:i], x=self.q[0:i])
+                for i in range(2, len(integrand) + 1)
+            ]
+        )
         m_interp = interp(q[1:], m)
         m_range = (m_interp(self.minr), m_interp(self.R))
         return m_interp, m_range
 
-    def _rho(self, r):
+    def _rho(self, r) -> float:
         rho = np.real(self._rho_interp(r))
         if rho > self.R:
             rho = 0
         return rho
 
-    def _M_e(self, r):
+    def _M_e(self, r) -> float:
         m = np.real(self._M_e_interp(r))
         return np.clip(m, *self.M_e_range)
 
-    def _c_s(self, r):
+    def _c_s(self, r) -> float:
         return np.abs(self._c_s_interp(r))
 
-    def plot_grid(self, ax=None, savefig=False, **kwargs):
-        return plot_desnity_grid(self, ax=ax, savefig=savefig,**kwargs)
+    def plot_grid(self, ax=None, fname=None, **kwargs):
+        return plot_desnity_grid(self, ax=ax, fname=fname, **kwargs)
 
-    def plot_1d_profile_data(self):
-        return plot_1d_profile_data(self)
+    def plot_1d_profile_data(self, fname="1dprofile.png"):
+        return plot_1d_profile_data(self, fname)
 
 
-def get_smooth_profile_functions(profile_name: str) -> Tuple[Callable, Callable, Callable]:
+def get_smooth_profile_functions(
+    profile_name: str,
+) -> Tuple[Callable, Callable, Callable]:
     profile = StellarProfile.load_matlab_profile(profile_name)
     return profile.rho, profile.c_s, profile.M_e
 

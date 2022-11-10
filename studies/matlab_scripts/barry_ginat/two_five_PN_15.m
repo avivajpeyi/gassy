@@ -1,4 +1,4 @@
-% MAIN ORBIT EVOLVER 
+% MAIN ORBIT EVOLVER
 
 
 %constants in cgs
@@ -16,8 +16,8 @@ m = 1*Msol;%UIS core
 % e = 0.9;
 e=0;
 Rs = G*(M+m)/c^2;
-a = 0.7*R;% Update in Spiralling113... (UIS)
-% a = 5e1*Rs;
+r = 0.7*R;% Update in Spiralling113... (UIS)
+% r = 5e1*Rs;
 
 %time-step
 dt = 1e5;
@@ -26,15 +26,15 @@ Tend2 = 5e6; % few orbits
 Tend3=1.5e6; % few steps
 
 %solution of the equations of motion
-[X,Y,v_x,v_y,t] = spiralling113MESA15(M,m,a,e,dt,Tend);%e = 0 always
+[X,Y,v_x,v_y,t] = spiralling113MESA15(M,m,r,e,dt,Tend);%e = 0 always
 out = struct('X', X, 'Y', Y, 'v_x', v_x, 'v_y', v_y, 't', t);
 % save('spiral_out', 'out');
 
 
 plot(X, Y)
-title('1M object sprilaing into a 15M object')
-xlabel('X [units]') 
-ylabel('Y [units]') 
+title('1M object sprilaing into r 15M object')
+xlabel('X [units]')
+ylabel('Y [units]')
 saveas(gcf,'orbit_new','png')
 
 

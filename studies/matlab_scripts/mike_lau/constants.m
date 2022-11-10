@@ -1,6 +1,6 @@
 classdef constants
     % Constants in cgs units unless otherwise specified
-    
+
     properties (Constant)
         %------------------------------------------------------------------
         % Physical constants and parameters
@@ -18,7 +18,7 @@ classdef constants
         KB          = 1.38066e-16;      % Boltzmann constant
         PROTONMASS  = 1.67262158e-24;   % Proton mass
         AVOGADRO    = 6.0221408577e23;  % Avogadro's number
-        
+
         %------------------------------------------------------------------
         % Unit conversion factors between code units (length in RSUN, mass
         % in MSUN) and cgs units
@@ -33,6 +33,6 @@ classdef constants
         ERG_PER_ECODE     = constants.MSUN * constants.CM_S_PER_VCODE^2;
         UPRES_PER_PRESCODE= constants.MSUN / (constants.RSUN * constants.TCODE^2);
     end
-    
+
 end
 

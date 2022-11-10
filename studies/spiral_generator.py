@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
-from gassy.constants import Msol, Rsol
 
+from gassy.constants import Msol, Rsol
 from gassy.two_body_evolver import evolve_bodies
 
 R = 111.3642 * Rsol
@@ -16,6 +16,6 @@ python_results = dict(X=X, Y=Y, v_x=v_x, v_y=v_y, t=t)
 
 plt.figure(figsize=(5, 5))
 
-plt.plot(python_results['X'], python_results['Y'], 'o-', label="Python")
+plt.plot(python_results["X"], python_results["Y"], "o-", label="Python")
 plt.legend()
 plt.savefig(f"spiral_orbit.png")

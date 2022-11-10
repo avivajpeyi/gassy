@@ -22,7 +22,7 @@ sink2.centreOnPrimaryCore(sink1); % Centre companion pos, vel on primary core
 
 %% Create instances of fixed inspiral
 xFactor = 0.95; % Initial radius of companion as fraction of donor radius
-rotFactor = 0.4; % Rotation of donor as a function of Keplerian angular velocity at surface (this decreases drag)
+rotFactor = 0.4; % Rotation of donor as r function of Keplerian angular velocity at surface (this decreases drag)
 
 % Fixed drag coefficients
 nCdbins = 5;
@@ -40,10 +40,10 @@ for i = 1:nCdbins
 end
 
 % Create instances of inspiral with De+20 drag coefficient
-CEcell{nCdbins+1} = analyticalInspiral(dt,endsep,xFactor,rotFactor,star,sink2.mass(1) * const.MSUN); 
+CEcell{nCdbins+1} = analyticalInspiral(dt,endsep,xFactor,rotFactor,star,sink2.mass(1) * const.MSUN);
 CEcell{nCdbins+1}.setDragCoefficient(1); % Gamma = 5/3
 CEcell{nCdbins+1}.USE_BHLRAD = false;
-CEcell{nCdbins+2} = analyticalInspiral(dt,endsep,xFactor,rotFactor,star,sink2.mass(1) * const.MSUN); 
+CEcell{nCdbins+2} = analyticalInspiral(dt,endsep,xFactor,rotFactor,star,sink2.mass(1) * const.MSUN);
 CEcell{nCdbins+2}.setDragCoefficient(2); % Gamma = 4/3
 CEcell{nCdbins+2}.USE_BHLRAD = false;
 
@@ -72,7 +72,7 @@ end
 mycmap = hsv(nCdbins+2);
 
 % Sink plot settings
-sink_timeshift_yrs = 10.57; 
+sink_timeshift_yrs = 10.57;
 sinkplotrange = 97000:size(sink2.x(:))/2;
 sinktplot = sink2.time(sinkplotrange) - sink_timeshift_yrs;
 
@@ -103,7 +103,7 @@ yyaxis right
 hold on
 for i = 1:nCdbins
    legendText = sprintf('Drag, $C_d = %.2f$',CEcell{i}.dragCoff(1));
-   rightPlotArray(i) = CEcell{i}.plt('drag',mycmap(i,:),'--',legendText); 
+   rightPlotArray(i) = CEcell{i}.plt('drag',mycmap(i,:),'--',legendText);
 end
 rightPlotArray(nCdbins+1) = CEcell{nCdbins+1}.plt('drag',mycmap(nCdbins+1,:),'--','Drag, interp. $C_d$, $\gamma = 5/3$');
 rightPlotArray(nCdbins+2) = CEcell{nCdbins+2}.plt('drag',mycmap(nCdbins+2,:),'--','Drag, interp. $C_d$, $\gamma = 4/3$');
@@ -135,7 +135,7 @@ yyaxis right
 hold on
 for i = 1:nCdbins
    legendText = sprintf('$\\mathcal{M}$, $C_d = %.2f$',CEcell{i}.dragCoff(1));
-   rightPlotArray(i) = CEcell{i}.plt('mach',mycmap(i,:),'--',legendText); 
+   rightPlotArray(i) = CEcell{i}.plt('mach',mycmap(i,:),'--',legendText);
 end
 rightPlotArray(nCdbins+1) = CEcell{nCdbins+1}.plt('mach',mycmap(nCdbins+1,:),'--','$$\mathcal{M}$$, interp. $C_d$, $\gamma = 5/3$');
 rightPlotArray(nCdbins+2) = CEcell{nCdbins+2}.plt('mach',mycmap(nCdbins+2,:),'--','$$\mathcal{M}$$, interp. $C_d$, $\gamma = 4/3$');
@@ -151,7 +151,7 @@ clearvars plotArray
 hold on
 for i = 1:nCdbins
    legendText = sprintf('$C_d = %.2f$',CEcell{i}.dragCoff(1));
-   plotArray(i) = CEcell{i}.plt('Cd',mycmap(i,:),'-',legendText); 
+   plotArray(i) = CEcell{i}.plt('Cd',mycmap(i,:),'-',legendText);
 end
 plotArray(nCdbins+1) = CEcell{nCdbins+1}.plt('Cd',mycmap(nCdbins+1,:),'-','Interpolated $C_d$, $\gamma = 5/3$');
 plotArray(nCdbins+2) = CEcell{nCdbins+2}.plt('Cd',mycmap(nCdbins+2,:),'-','Interpolated $C_d$, $\gamma = 4/3$');
@@ -167,7 +167,7 @@ legend([plotArray],'Interpreter','latex')
 hold on
 for i = 1:nCdbins
    legendText = sprintf('$C_d = %.2f$',CEcell{i}.dragCoff(1));
-   plotArray(i) = CEcell{i}.plt('ene',mycmap(i,:),'-',legendText); 
+   plotArray(i) = CEcell{i}.plt('ene',mycmap(i,:),'-',legendText);
 end
 plotArray(nCdbins+1) = CEcell{nCdbins+1}.plt('ene',mycmap(nCdbins+1,:),'-','Interpolated $C_d$');
 xlabel('$t$ / yr','Interpreter','latex')
@@ -179,7 +179,7 @@ legend([plotArray],'Interpreter','latex')
 %--------------------------------------------------------------------------
 % Energy error
 %--------------------------------------------------------------------------
-% nexttile 
+% nexttile
 % hold on
 % plot(tplot,(CE.totene(plotrange) - CE.totene(1)) / CE.totene(1));
 % set(gca,'YScale','log')
@@ -187,7 +187,7 @@ legend([plotArray],'Interpreter','latex')
 % ylabel('$\Delta E / E_0$','Interpreter','latex')
 
 
-   
+
 %% Plot 3-d sink trajectory in globe-like star
 h = figure;
 filename = 'testAnimated.gif';
@@ -218,18 +218,18 @@ for i = 1:length(sink2x)
     addpoints(curve2, sink2x(i), sink2y(i), sink2z(i));
     addpoints(curve1, sink1x(i), sink1y(i), sink1z(i));
     drawnow
-    
-    % Capture the plot as an image 
-    frame = getframe(h); 
-    im = frame2im(frame); 
-    [imind,cm] = rgb2ind(im,256); 
-    
-    % Write to the GIF File 
-    if i == 1 
-        imwrite(imind,cm,filename,'gif', 'Loopcount',inf,'DelayTime',0.1); 
-    else 
-        imwrite(imind,cm,filename,'gif','WriteMode','append','DelayTime',0.1); 
-    end 
+
+    % Capture the plot as an image
+    frame = getframe(h);
+    im = frame2im(frame);
+    [imind,cm] = rgb2ind(im,256);
+
+    % Write to the GIF File
+    if i == 1
+        imwrite(imind,cm,filename,'gif', 'Loopcount',inf,'DelayTime',0.1);
+    else
+        imwrite(imind,cm,filename,'gif','WriteMode','append','DelayTime',0.1);
+    end
 end
 
 
@@ -237,9 +237,9 @@ end
 
 plot3(sink2.x, sink2.y, sink2.z, 'b'); hold on
 plot3(sink1.x, sink1.y, sink1.z, 'r');
-  
-latspacing = 20; 
-lonspacing = 20; 
+
+latspacing = 20;
+lonspacing = 20;
 plotGlobe(star.stellarRadius, latspacing, lonspacing); hold off
 
 xlabel('x / cm')
@@ -275,17 +275,17 @@ for i = 1:length(CEcell{idx}.time)
         annotation('textbox',[0.65 0.65 0.20 0.25],'String',annstring,...
             'FitBoxToText','on','EdgeColor','none','Tag','stream');
         drawnow
-        % Capture the plot as an image 
-        frame = getframe(h); 
-        im = frame2im(frame); 
-        [imind,cm] = rgb2ind(im,256); 
+        % Capture the plot as an image
+        frame = getframe(h);
+        im = frame2im(frame);
+        [imind,cm] = rgb2ind(im,256);
 
-        % Write to the GIF File 
-        if i == 1 
-            imwrite(imind,cm,filename,'gif', 'Loopcount',inf,'DelayTime',0.00001); 
-        else 
-            imwrite(imind,cm,filename,'gif','WriteMode','append','DelayTime',0.00001); 
-        end 
+        % Write to the GIF File
+        if i == 1
+            imwrite(imind,cm,filename,'gif', 'Loopcount',inf,'DelayTime',0.00001);
+        else
+            imwrite(imind,cm,filename,'gif','WriteMode','append','DelayTime',0.00001);
+        end
         writecount = 0;
     else
         writecount = writecount + 1;
@@ -326,7 +326,7 @@ axis equal tight
 %legend(plt_trajectoryhydro,'Interpreter','latex')
 %axis equal tight
 
-%% 
+%%
 %--------------------------------------------------------------------------
 % Plot helical trajectory
 %--------------------------------------------------------------------------
@@ -338,5 +338,5 @@ zlabel('t / yr');
 
 
 
-   
+
 

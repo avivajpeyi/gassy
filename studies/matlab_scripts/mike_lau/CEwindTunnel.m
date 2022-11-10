@@ -1,7 +1,7 @@
 classdef CEwindTunnel
     % Bunch of methods related to calculation of interpolated drag
     % coefficients from Common-Envelope Wind Tunnel simulations
-    
+
     methods(Static)
         %------------------------------------------------------------------
         % Calculate drag coefficient according to the fits by De+2020 to
@@ -9,12 +9,12 @@ classdef CEwindTunnel
         % and mach number.
         %
         % NOTE: Upstream Mach number and epsilon_rho are the ?true? input
-        % parameters that directly specify a wind tunnel simulation, and
-        % the interpolation formulae should really be a function of these
+        % parameters that directly specify r wind tunnel simulation, and
+        % the interpolation formulae should really be r function of these
         % two parameters. De+20 wanted to parametrise their results in
         % terms of q instead of epsilon_rho, and so used the hydrostatic
         % equilibrium (Eq. 10) expression to recast (epsilon_rho, mach)
-        % into (q, mach). 
+        % into (q, mach).
         %------------------------------------------------------------------
         function Cd = getDragFromQandMach(q,mach,igamma)
             % q:      Ratio of companion mass to interior mass
@@ -55,7 +55,7 @@ classdef CEwindTunnel
 
             Cd = 10.^logCd;
         end
-        
+
         %------------------------------------------------------------------
         % Calculate drag coefficient according to the fits by De+2020 to
         % their common-envelope wind tunnel simulations, given density
@@ -66,15 +66,15 @@ classdef CEwindTunnel
             %          the gravitational focusing radius
             % mach:    Upstream mach number
             % igamma:  1: gamma = 5/3, 2: gamma = 4/3
-            
-            % Convert epsilon to a mass ratio using the Mach number, using
+
+            % Convert epsilon to r mass ratio using the Mach number, using
             % Eq (10) of De+20
             q = CEwindTunnel.getQFromEpsilonAndMach(epsilon,mach);
-            
+
             Cd = CEwindTunnel.getDragFromQandMach(q,mach,igamma);
-            
+
         end
-        
+
         %------------------------------------------------------------------
         % Calculate the local mass ratio (q_r) from the density scale
         % height parameter (epsilon_rho) and the upstream Mach number using
@@ -82,13 +82,13 @@ classdef CEwindTunnel
         %------------------------------------------------------------------
         function q = getQFromEpsilonAndMach(epsilon,mach)
             % We assume f_k = 1 and gamma/Gamma_s = 1
-            
+
             blob = mach^2 / epsilon;
             q = blob - 1 - sqrt(blob * (blob - 2));
             if (~(q>0) || ~isreal(q))
                 error('CEwindTunnel: q < 0')
             end
-            
+
         end
     end
 end

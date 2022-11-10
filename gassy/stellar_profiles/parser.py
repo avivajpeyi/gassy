@@ -33,8 +33,8 @@ def read_profile(profile_name: str) -> pd.DataFrame:
     params = ["c_s", "q", "rho"]
     profile = {p: profile[p].flatten() for p in params}
     data = pd.DataFrame(profile)
-    data["c_s"] = data["c_s"] * 100  # convert to cgs (i think?) #TODO: check with evgeni
-    data["q"] = data['q'] * constants.Rsol  # convert to cgs
+    data["c_s"] = (
+        data["c_s"] * 100
+    )  # convert to cgs (i think?) #TODO: check with evgeni
+    data["q"] = data["q"] * constants.Rsol  # convert to cgs
     return data
-
-

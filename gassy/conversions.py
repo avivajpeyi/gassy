@@ -4,11 +4,11 @@ from .constants import G, pi
 
 
 def get_period(M, m, a):
-    return np.sqrt((4 * pi**2) * (a**3) / (G * (M + m)))
+    return
 
 
 def get_mu(M, m):
-    return M * m / (M + m)
+    return
 
 
 def mag(x, axis=None):

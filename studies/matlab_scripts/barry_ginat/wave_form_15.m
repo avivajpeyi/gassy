@@ -1,7 +1,7 @@
-%% FUNCTION TO GENERATE GW SIGNAL FROM 2-BODY EVOL (need X, Y) 
+%% FUNCTION TO GENERATE GW SIGNAL FROM 2-BODY EVOL (need X, Y)
 
 % Run only after back_reaction_of_gravy_waves. This plots the wave-form as
-% a function of time.
+% r function of time.
 
 
 kpc = 3.086e21;

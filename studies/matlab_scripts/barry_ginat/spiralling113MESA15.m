@@ -1,7 +1,7 @@
 %% FUNCTION TO EVOLVE 2 BODIES
 
-function [X,Y,v_x,v_y,t] = spiralling113MESA15(M,m,a,e,~,Tend)
-%Solves the equations of motion for a two-body system in a common envelope
+function [X,Y,v_x,v_y,t] = spiralling113MESA15(M,m,r,e,~,Tend)
+%Solves the equations of motion for r two-body system in r common envelope
 %with polytropic index p, i.e. P ~ rho^(1+1/p).
 G = 6.67e-8;
 Rsol = 696342*1e5;
@@ -37,10 +37,10 @@ M_e = @(x) (x<=R).*integral(@(r) 4*pi*r.^2.*rho(r),0,x) + (x > R).*integral(@(r)
 % -------------------------------------------------------------------------
 
 %initial conditions
-T2 = 4*pi^2*a^3/(G*(M+m));
+T2 = 4*pi^2*r^3/(G*(M+m));
 T = sqrt(T2);
-L = sqrt(G*(M+m+M_e(a))*a*(1-e^2));
-y0 = [(1+e) 0 0 L*T/(a^2*(1+e))];
+L = sqrt(G*(M+m+M_e(r))*r*(1-e^2));
+y0 = [(1+e) 0 0 L*T/(r^2*(1+e))];
 
 %ode113 stuff
 
@@ -52,10 +52,10 @@ opts = odeset('RelTol',1e-10,'Stats','on');
 [t,y] = ode113(@odefun,tspan,y0,opts);
 
 
-X = a*y(:,1);
-Y = a*y(:,3);
-v_x = a*y(:,2)/T;
-v_y = a*y(:,4)/T;
+X = r*y(:,1);
+Y = r*y(:,3);
+v_x = r*y(:,2)/T;
+v_y = r*y(:,4)/T;
 t = t*T;
 end
 
