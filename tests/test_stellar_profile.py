@@ -2,15 +2,10 @@ import os
 import shutil
 import unittest
 
-import numpy as np
 import pandas as pd
 import pytest
 
-from gassy.stellar_profiles import (
-    StellarProfile,
-    get_smooth_profile_functions,
-    read_profile,
-)
+from gassy.stellar_profiles import StellarProfile, read_profile
 
 CLEANUP = False
 
@@ -35,31 +30,6 @@ class TestStellarProfile(unittest.TestCase):
         expected_cols = ["rho", "c_s", "q"]
         self.assertTrue(all([col in p.columns for col in expected_cols]))
 
-    def test_rho_smoothning(self):
-        rho_f, c_f, M_e_f = get_smooth_profile_functions(self.profile_name)
-        true_rho = 1.2861e03
-        calc_rho = rho_f(2)
-        self.assertTrue(
-            np.isclose(true_rho, calc_rho, rtol=self.tolerance),
-            f"rho: {true_rho} != {calc_rho}",
-        )
-
-    def test_M_e_smoothning(self):
-        rho_f, c_f, M_e_f = get_smooth_profile_functions(self.profile_name)
-        true_M_e = 5.3871e03  # from matlab
-        calc_M_e = M_e_f(1)
-        self.assertTrue(
-            np.isclose(true_M_e, calc_M_e, rtol=self.tolerance),
-            f"M_e: {true_M_e} != {calc_M_e}",
-        )
-
-        true_M_e = 3.0484e34  # from matlab
-        calc_M_e = M_e_f(5.4283e12)
-        # FIXME: this doenst match exactly -- something wrong in my integration?
-        self.assertTrue(
-            np.isclose(true_M_e, calc_M_e, rtol=3), f"M_e: {true_M_e} != {calc_M_e}"
-        )
-
     @pytest.mark.slow
     def test_plot(self):
         profile = StellarProfile.load_matlab_profile(self.profile_name)
@@ -73,4 +43,4 @@ class TestStellarProfile(unittest.TestCase):
 
 def make_profile_plots(profile, fname):
     profile.plot_1d_profile_data(fname)
-    profile.plot_grid(fname=fname.replace("profile", "grid"))
+    profile.plot_grid(fname=fname.replace("profile.png", "grid.png"))

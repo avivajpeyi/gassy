@@ -38,12 +38,3 @@ def plot_1d_profile_data(profile, fname="1dprofile.png"):
     fig.subplots_adjust(hspace=0, wspace=0)
     plt.tight_layout()
     fig.savefig(fname)
-
-
-if __name__ == "__main__":
-    from gassy.stellar_profiles.stellar_profile import StellarProfile
-
-    profile = StellarProfile.load_matlab_profile("15Msol")
-    print("Profile loaded")
-    plot_desnity_grid(profile, savefig=True)
-    plot_1d_profile_data(profile)
