@@ -9,11 +9,11 @@ from .systems import TwoBodyBase
 
 class Evolver:
     def __init__(
-            self,
-            two_body_system: TwoBodyBase,
-            dt: Optional[float] = None,
-            num_periods: Optional[float] = None,
-            max_steps: Optional[int] = 10000,
+        self,
+        two_body_system: TwoBodyBase,
+        dt: Optional[float] = None,
+        num_periods: Optional[float] = None,
+        max_steps: Optional[int] = 10000,
     ):
         self.two_body = two_body_system
         T = self.two_body.period

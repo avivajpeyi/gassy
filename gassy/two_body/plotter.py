@@ -45,7 +45,7 @@ def plot_orbit(pos, ax=None, save_fname=None):
     if ax is None:
         fig, ax = plt.subplots()
 
-    valid_idx = np.isfinite(pos[:,0])
+    valid_idx = np.isfinite(pos[:, 0])
     ax.plot(pos[valid_idx, 0], pos[valid_idx, 1], "-o", markersize=0.1)
     ax.scatter(0, 0, marker="*", color="red")
 
@@ -64,7 +64,9 @@ def plot_orbit(pos, ax=None, save_fname=None):
     return ax
 
 
-def plot_diagnostic(pos, ke, gpe, t, h=[], save_fname="orbit_diagnostic.png", label=None):
+def plot_diagnostic(
+    pos, ke, gpe, t, h=[], save_fname="orbit_diagnostic.png", label=None
+):
     fig = plt.figure(figsize=(12, 6))
     gs = GridSpec(2, 4)
     ax1 = fig.add_subplot(gs[0:2, 0:2])

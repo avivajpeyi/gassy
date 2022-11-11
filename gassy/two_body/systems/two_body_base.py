@@ -1,22 +1,20 @@
 import warnings
-from .orbit_type import OrbitType
 from typing import Optional
 
 import numpy as np
 
 from gassy.constants import G, pi
 
-
-
+from .orbit_type import OrbitType
 
 
 class TwoBodyBase:
     def __init__(
-            self,
-            m: float,
-            M: float,
-            init_x: float,
-            init_vy: float,
+        self,
+        m: float,
+        M: float,
+        init_x: float,
+        init_vy: float,
     ):
         """
         :param m: mass of the smaller body (kg)
@@ -73,16 +71,16 @@ class TwoBodyBase:
     @property
     def period(self) -> float:
         m, M, a = (self.m, self.Me, self.rmag)
-        return np.sqrt((4 * pi ** 2) * (a ** 3) / (G * (M + m)))
+        return np.sqrt((4 * pi**2) * (a**3) / (G * (M + m)))
 
     @property
     def gravitational_force(self) -> np.ndarray:
-        f_mag = -G * self.m * self.M / self.rmag ** 2
+        f_mag = -G * self.m * self.M / self.rmag**2
         return f_mag * self.rhat
 
     @property
     def drag_force(self) -> np.ndarray:
-        return np.array([0,0])
+        return np.array([0, 0])
 
     @property
     def net_force(self) -> np.ndarray:
@@ -102,10 +100,10 @@ class TwoBodyBase:
         """ddot M"""
         q = np.zeros(4)
         x, y, vx, vy, ax, ay = np.concatenate([self.r, self.v, self.accel])
-        q[0] = 2 * (x * ax + vx ** 2)
+        q[0] = 2 * (x * ax + vx**2)
         q[1] = x * ay + y * ax + 2 * vx * vy
         q[2] = q[1]
-        q[3] = 2 * (y * ay + vy ** 2)
+        q[3] = 2 * (y * ay + vy**2)
         return q * self.mu
 
     @property
@@ -146,7 +144,7 @@ class TwoBodyBase:
     @property
     def Ek(self) -> float:
         """Kinetic Energy"""
-        return 0.5 * self.m * self.vmag ** 2
+        return 0.5 * self.m * self.vmag**2
 
     @property
     def L(self) -> float:

@@ -1,9 +1,8 @@
-from gassy.two_body import WaveformGenerator
-
 import os
 import shutil
 import unittest
 
+from gassy.two_body import WaveformGenerator
 
 DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -26,7 +25,7 @@ class TestWaveformGenerator(unittest.TestCase):
 
     def test_waveform_generator_small_drag(self):
         kwgs = self.kwgs.copy()
-        kwgs['num_periods'] = kwgs['num_periods']*2
+        kwgs["num_periods"] = kwgs["num_periods"] * 2
         waveform = WaveformGenerator(**kwgs, drag_coeff=1e-5)
         waveform(distance=1000, save_plot_fname=f"{self.outdir}/{waveform.label}.png")
 

@@ -1,4 +1,5 @@
 import numpy as np
+
 from .plotter import plot_diagnostic
 
 
@@ -64,4 +65,6 @@ class History:
         )
 
     def plot(self, save_fname=""):
-        plot_diagnostic(pos=self.pos, ke=self.Ek, gpe=self.Egpe, t=self.time, save_fname=save_fname)
+        plot_diagnostic(
+            pos=self.pos, ke=self.Ek, gpe=self.Egpe, t=self.time, save_fname=save_fname
+        )

@@ -1,10 +1,11 @@
-import numpy as np
 import unittest
-from gassy.two_body import TwoBodyBase, OrbitType
+
+import numpy as np
+
+from gassy.two_body import OrbitType, TwoBodyBase
 
 
 class TestTwoBodyBasics(unittest.TestCase):
-
     def test_two_body_config(self):
         bodies = TwoBodyBase(m=1, M=100, init_x=-1, init_vy=0)
         Fg = bodies.gravitational_force
