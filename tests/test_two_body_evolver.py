@@ -2,18 +2,18 @@ import os
 import shutil
 import unittest
 
-from gassy.evolver.two_body_evolver import TwoBodyEvolver, TwoBodySystem
+from gassy.two_body import Evolver, create_two_body_system
 
 DIR = os.path.abspath(os.path.dirname(__file__))
 
 
-CLEANUP = False
+CLEANUP = True
 
 
 class TestTwoBodyEvolver(unittest.TestCase):
     def setUp(self) -> None:
         self.body_kwgs = dict(m=1, M=1e4, init_x=-1, init_vy=0.025)
-        self.evol_kwgs = dict(num_periods=3)
+        self.evol_kwgs = dict(num_periods=0.1, max_steps=10)
         self.outdir = f"{DIR}/test_plots/evolver"
         os.makedirs(self.outdir, exist_ok=True)
 
@@ -22,16 +22,16 @@ class TestTwoBodyEvolver(unittest.TestCase):
             shutil.rmtree(self.outdir)
 
     def test_no_drag_evol(self):
-        two_body_system = TwoBodySystem(**self.body_kwgs)
-        two_body_evolver = TwoBodyEvolver(two_body_system, **self.evol_kwgs)
-        two_body_evolver.cache.plot(f"{self.outdir}/no_drag.png")
+        two_body_system = create_two_body_system(**self.body_kwgs)
+        two_body_evolver = Evolver(two_body_system, **self.evol_kwgs)
+        two_body_evolver.history.plot(f"{self.outdir}/no_drag.png")
 
     def test_small_drag(self):
-        two_body_system = TwoBodySystem(drag_coeff=0.0001, **self.body_kwgs)
-        two_body_evolver = TwoBodyEvolver(two_body_system, **self.evol_kwgs)
-        two_body_evolver.cache.plot(f"{self.outdir}/small_drag.png")
+        two_body_system = create_two_body_system(drag_coeff=1e-5, **self.body_kwgs)
+        two_body_evolver = Evolver(two_body_system, **self.evol_kwgs)
+        two_body_evolver.history.plot(f"{self.outdir}/small_drag.png")
 
     def test_large_drag(self):
-        two_body_system = TwoBodySystem(drag_coeff=0.00001, **self.body_kwgs)
-        two_body_evolver = TwoBodyEvolver(two_body_system, **self.evol_kwgs)
-        two_body_evolver.cache.plot(f"{self.outdir}/large_drag.png")
+        two_body_system = create_two_body_system(drag_coeff=1e-4, **self.body_kwgs)
+        two_body_evolver = Evolver(two_body_system, **self.evol_kwgs)
+        two_body_evolver.history.plot(f"{self.outdir}/large_drag.png")

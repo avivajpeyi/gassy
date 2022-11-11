@@ -1,9 +1,8 @@
 import numpy as np
-
 from .plotter import plot_diagnostic
 
 
-class TwoBodyHistory:
+class History:
     """
     Stores the data for the two body system at each timestep.
     """
@@ -65,4 +64,4 @@ class TwoBodyHistory:
         )
 
     def plot(self, save_fname=""):
-        plot_diagnostic(self.pos, self.Ek, self.Egpe, save_fname=save_fname)
+        plot_diagnostic(pos=self.pos, ke=self.Ek, gpe=self.Egpe, t=self.time, save_fname=save_fname)
