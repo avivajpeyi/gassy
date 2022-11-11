@@ -20,15 +20,16 @@ class TestWaveformGenerator(unittest.TestCase):
             shutil.rmtree(self.outdir)
 
     def test_waveform_generator_no_drag(self):
-        waveform = WaveformGenerator(**self.kwgs)
-        waveform(distance=1000, save_plot_fname=f"{self.outdir}/{waveform.label}.png")
+        WaveformGenerator(**self.kwgs).plot(distance=1000, save_dir=self.outdir)
 
     def test_waveform_generator_small_drag(self):
         kwgs = self.kwgs.copy()
         kwgs["num_periods"] = kwgs["num_periods"] * 2
-        waveform = WaveformGenerator(**kwgs, drag_coeff=1e-5)
-        waveform(distance=1000, save_plot_fname=f"{self.outdir}/{waveform.label}.png")
+        WaveformGenerator(**kwgs, drag_coeff=1e-5).plot(
+            distance=1000, save_dir=self.outdir
+        )
 
     def test_waveform_generator_large_drag(self):
-        waveform = WaveformGenerator(**self.kwgs, drag_coeff=1e-4)
-        waveform(distance=1000, save_plot_fname=f"{self.outdir}/{waveform.label}.png")
+        WaveformGenerator(**self.kwgs, drag_coeff=1e-4).plot(
+            distance=1000, save_dir=self.outdir
+        )

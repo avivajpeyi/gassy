@@ -34,16 +34,19 @@ class WaveformGenerator:
         self.strain = Strain(self.history.mass_moment)
         self.label = self.two_body_sys.label
 
-    def __call__(self, distance, theta=0, phi=0, save_plot_fname=""):
+    def __call__(self, distance, theta=0, phi=0):
         h = self.strain.h(distance=distance, theta=theta, phi=phi)
-        if save_plot_fname:
-            plot_diagnostic(
-                pos=self.history.pos,
-                ke=self.history.Ek,
-                gpe=self.history.Egpe,
-                t=self.history.time,
-                h=h,
-                label=self.two_body_sys.label,
-                save_fname=save_plot_fname,
-            )
         return self.history.time, h
+
+    def plot(self, distance, theta=0, phi=0, save_dir=""):
+        t, h = self(distance, theta, phi)
+        save_fname = f"{save_dir}/{self.label}.png" if len(save_dir) > 0 else ""
+        plot_diagnostic(
+            pos=self.history.pos,
+            ke=self.history.Ek,
+            gpe=self.history.Egpe,
+            t=self.history.time,
+            h=h,
+            label=self.two_body_sys.label,
+            save_fname=save_fname,
+        )
