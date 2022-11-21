@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.gridspec import GridSpec
 
+from gassy.constants import Rsol
+
 
 def plot_energy(ke, gpe, t, ax=None, save_fname=None):
     if ax is None:
@@ -11,7 +13,7 @@ def plot_energy(ke, gpe, t, ax=None, save_fname=None):
     tot = ke + gpe
     ax1.plot(t, ke / ke[0], label="Kinetic", color="C1")
     ax1.plot(t, gpe / gpe[0], label="Gravitational", color="C2")
-    ax2.plot(t, tot / tot[0], label="Total", color="C3", linestyle="--")
+    ax2.plot(t, (tot - tot[0]) / tot[0], label="Total", color="C3", linestyle="--")
 
     ax1.legend(frameon=True, loc="upper left")
     ax1.set_xlabel("t [s]")
@@ -41,17 +43,41 @@ def plot_waveform(h, t, ax=None, save_fname=None):
     return ax
 
 
-def plot_orbit(pos, ax=None, save_fname=None):
+def plot_velocity(vel, t, ax=None, save_fname=None):
     if ax is None:
         fig, ax = plt.subplots()
+    vel = get_mag(vel)
+    rel_vel = vel / vel[0]
+    ax.scatter(t, rel_vel, c=rel_vel, cmap="Blues", s=0.75)
+    ax.set_xlabel("t [s]")
+    ax.set_ylabel(r"|\vec{v}| / |\vec{v}|[0]")
+    if save_fname is not None:
+        plt.savefig(save_fname)
+    return ax
+
+
+def plot_orbit(pos, vel=[], ax=None, save_fname=None):
+    if ax is None:
+        fig, ax = plt.subplots()
+    ax.set_facecolor("black")
 
     valid_idx = np.isfinite(pos[:, 0])
-    ax.plot(pos[valid_idx, 0], pos[valid_idx, 1], "-o", markersize=0.1)
+    pos = pos[valid_idx, :] / Rsol
+    if len(vel) > 0:
+        vel = get_mag(vel[valid_idx, :])
+        rel_vel = vel / vel[0]
+        ax.scatter(
+            pos[valid_idx, 0], pos[valid_idx, 1], s=0.75, c=rel_vel, cmap="Blues"
+        )
+    else:
+        ax.plot(pos[valid_idx, 0], pos[valid_idx, 1], linewidth=0.5, c="white")
+
     ax.scatter(0, 0, marker="*", color="red")
+    ax.scatter(pos[0, 0], pos[0, 1], marker="o", color="white")
 
     # max pos
-    rs = np.sqrt(np.einsum("ij,ij->i", pos, pos))
-    r = np.max(rs[np.isfinite(rs)])
+    rs = get_mag(pos)
+    r = np.max(rs[np.isfinite(rs)]) * 1.1
     ax.set_xlim(-r, r)
     ax.set_ylim(-r, r)
 
@@ -65,21 +91,31 @@ def plot_orbit(pos, ax=None, save_fname=None):
 
 
 def plot_diagnostic(
-    pos, ke, gpe, t, h=[], save_fname="orbit_diagnostic.png", label=None
+    pos, ke, gpe, t, h=[], vel=[], save_fname="orbit_diagnostic.png", label=None
 ):
     fig = plt.figure(figsize=(12, 6))
-    gs = GridSpec(2, 4)
-    ax1 = fig.add_subplot(gs[0:2, 0:2])
-    ax2 = fig.add_subplot(gs[0, 2:4])
+    gs = GridSpec(3, 4)
+    ax_orbit = fig.add_subplot(gs[:, 0:2])
+    ax_energy = fig.add_subplot(gs[0, 2:4])
 
-    plot_orbit(pos, ax=ax1)
-    plot_energy(ke, gpe, t, ax=ax2)
+    plot_orbit(pos, vel, ax=ax_orbit)
+    plot_energy(ke, gpe, t, ax=ax_energy)
+
+    if len(vel) > 0:
+        ax_vel = fig.add_subplot(gs[1, 2:4], sharex=ax_energy)
+        plot_velocity(vel, t, ax=ax_vel)
+
     if len(h) > 0:
-        ax3 = fig.add_subplot(gs[1, 2:4])
-        plot_waveform(h, t, ax=ax3)
+        ax_strain = fig.add_subplot(gs[2, 2:4], sharex=ax_energy)
+        plot_waveform(h, t, ax=ax_strain)
 
     if label is not None:
         plt.suptitle(label)
 
     plt.tight_layout()
     plt.savefig(save_fname)
+
+
+def get_mag(x: np.ndarray):
+    """Get magnitude of a 2d vector"""
+    return np.sqrt(x[:, 0] ** 2 + x[:, 1] ** 2)

@@ -1,11 +1,15 @@
-"""constants in cgs"""
+"""constants in SI"""
 import numpy as np
+from astropy import units
 from astropy.constants import G, M_sun, R_sun, au, c, kpc
 
-G = G.cgs.value
-c = c.cgs.value
-Rsol = R_sun.cgs.value
-Msol = M_sun.cgs.value
-AU = au.cgs.value
+m_per_s = units.m / units.s
+m_per_s2 = units.m / units.s**2
+kgm_s2 = units.kg * m_per_s2
+G = G.si.value
+c = c.si.value
+Rsol = R_sun.si.value
+Msol = M_sun.si.value
+AU = au.si.value
+kpc = kpc.si.value
 pi = np.pi
-kpc = kpc.cgs.value

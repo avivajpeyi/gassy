@@ -66,5 +66,10 @@ class History:
 
     def plot(self, save_fname=""):
         plot_diagnostic(
-            pos=self.pos, ke=self.Ek, gpe=self.Egpe, t=self.time, save_fname=save_fname
+            pos=self.pos,
+            ke=self.Ek,
+            gpe=self.Egpe,
+            t=self.time,
+            vel=self.vel,
+            save_fname=save_fname,
         )

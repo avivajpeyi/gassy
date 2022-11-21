@@ -3,7 +3,7 @@ from typing import Optional
 
 import numpy as np
 
-from gassy.constants import G, pi
+from gassy.constants import G, Msol, Rsol, kgm_s2, m_per_s, m_per_s2, pi
 
 from .orbit_type import OrbitType
 
@@ -14,19 +14,15 @@ class TwoBodyBase:
         m: float,
         M: float,
         init_x: float,
-        init_vy: float,
+        init_vy: Optional[float] = None,
     ):
-        """
-        :param m: mass of the smaller body (kg)
-        Args:
-            m:
-            M:
-            init_x:
-            init_vy:
-        """
-        self.m = m
-        self.M = M
-        self.r = np.array([init_x, 0])
+        self.m = m * Msol
+        self.M = M * Msol
+        self.r = np.array([init_x, 0]) * Rsol
+
+        if init_vy is None:
+            init_vy = self._orbital_vel(self.r[0])
+
         self.v = np.array([0, init_vy])
         self.init_y = self.pack_data()
         self.bound_orbit_check()
@@ -68,6 +64,9 @@ class TwoBodyBase:
     def escape_vel(self):
         return np.sqrt(2 * G * self.Me / self.rmag)
 
+    def _orbital_vel(self, radius: float) -> float:
+        return np.sqrt(np.abs(G * self.Me / radius))
+
     @property
     def period(self) -> float:
         m, M, a = (self.m, self.Me, self.rmag)
@@ -98,13 +97,12 @@ class TwoBodyBase:
     @property
     def mass_moment(self):
         """ddot M"""
-        q = np.zeros(4)
         x, y, vx, vy, ax, ay = np.concatenate([self.r, self.v, self.accel])
-        q[0] = 2 * (x * ax + vx**2)
-        q[1] = x * ay + y * ax + 2 * vx * vy
-        q[2] = q[1]
-        q[3] = 2 * (y * ay + vy**2)
-        return q * self.mu
+        M00 = 2 * (x * ax + vx**2)
+        M01 = x * ay + y * ax + 2 * vx * vy
+        M10 = M01
+        M11 = 2 * (y * ay + vy**2)
+        return np.array([M00, M01, M10, M11]) * self.mu
 
     @property
     def orbit_type(self) -> OrbitType:
@@ -131,7 +129,7 @@ class TwoBodyBase:
     @property
     def _m_label(self):
         msun = r"$M_{\odot}$"
-        return f"m={self.m} {msun}, M={self.M} {msun}"
+        return f"m={self.m / Msol} {msun}, M={self.M / Msol} {msun}"
 
     def __repr__(self):
         return f"{self.label} [{self.orbit_type}]"
@@ -144,11 +142,27 @@ class TwoBodyBase:
     @property
     def Ek(self) -> float:
         """Kinetic Energy"""
-        return 0.5 * self.m * self.vmag**2
+        return 0.5 * np.power(self.vmag, 2)
+
+    @property
+    def Etot(self) -> float:
+        return self.Egpe + self.Ek
 
     @property
     def L(self) -> float:
         return self.m * np.cross(self.r, self.v)
+
+    @property
+    def eccentricity(self):
+        """Eccentricity"""
+        return np.sqrt(
+            1 + 2 * self.Etot * self.L**2 / (G**2 * self.m**2 * self.Me**2)
+        )
+
+    @property
+    def a(self):
+        """Semi-major axis"""
+        return self.rmag / (1 - self.eccentricity)
 
 
 def mag(x, axis=None):

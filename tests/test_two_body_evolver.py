@@ -7,13 +7,13 @@ from gassy.two_body import Evolver, create_two_body_system
 DIR = os.path.abspath(os.path.dirname(__file__))
 
 
-CLEANUP = True
+CLEANUP = False
 
 
 class TestTwoBodyEvolver(unittest.TestCase):
     def setUp(self) -> None:
-        self.body_kwgs = dict(m=1, M=1e4, init_x=-1, init_vy=0.025)
-        self.evol_kwgs = dict(num_periods=0.1, max_steps=10)
+        self.body_kwgs = dict(m=1, M=1, init_x=-1)
+        self.evol_kwgs = dict(num_periods=2, max_steps=10000)
         self.outdir = f"{DIR}/test_plots/evolver"
         os.makedirs(self.outdir, exist_ok=True)
 

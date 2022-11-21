@@ -13,8 +13,7 @@ class WaveformGenerator:
         self,
         m: float,
         M: float,
-        init_x: float,
-        init_vy: float,
+        r: float,
         num_periods: float,
         drag_coeff: Optional[float] = None,
         stellar_polytropic_index: Optional[float] = None,
@@ -23,8 +22,7 @@ class WaveformGenerator:
         kwgs = dict(
             m=m,
             M=M,
-            init_x=init_x,
-            init_vy=init_vy,
+            init_x=r,
             drag_coeff=drag_coeff,
             stellar_polytropic_index=stellar_polytropic_index,
             mesa_profile_fname=mesa_profile_fname,
@@ -50,3 +48,7 @@ class WaveformGenerator:
             label=self.two_body_sys.label,
             save_fname=save_fname,
         )
+
+
+def orbital_velocity(m, M, r):
+    return np.sqrt(G * (m + M) / r)

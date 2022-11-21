@@ -12,7 +12,8 @@ class TwoBodyConstDrag(TwoBodyBase):
 
     @property
     def drag_force(self) -> np.ndarray:
-        return -self.drag_coeff * self.vhat
+        # bondi-hoyle-lyttleton drag force
+        return -self.drag_coeff * self.vhat * self.vmag**2
 
     @property
     def label(self):

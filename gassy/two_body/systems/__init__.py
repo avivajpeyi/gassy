@@ -10,7 +10,7 @@ def create_two_body_system(
     m: float,
     M: float,
     init_x: float,
-    init_vy: float,
+    init_vy: Optional[float] = None,
     drag_coeff: Optional[float] = None,
     stellar_polytropic_index: Optional[float] = None,
     mesa_profile_fname: Optional[str] = None,
