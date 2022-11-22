@@ -4,6 +4,8 @@ from matplotlib.gridspec import GridSpec
 
 from gassy.constants import Rsol
 
+VEL_CMAP = "Blues_r"
+
 
 def plot_energy(ke, gpe, t, ax=None, save_fname=None):
     if ax is None:
@@ -11,15 +13,19 @@ def plot_energy(ke, gpe, t, ax=None, save_fname=None):
     ax1, ax2 = ax, ax.twinx()
 
     tot = ke + gpe
-    ax1.plot(t, ke / ke[0], label="Kinetic", color="C1")
-    ax1.plot(t, gpe / gpe[0], label="Gravitational", color="C2")
+    ax1.plot(t, ke / np.abs(ke[0]), label="Kinetic", color="C1")
+    ax1.plot(t, gpe / np.abs(gpe[0]), label="Gravitational", color="C2")
     ax2.plot(t, (tot - tot[0]) / tot[0], label="Total", color="C3", linestyle="--")
 
     ax1.legend(frameon=True, loc="upper left")
     ax1.set_xlabel("t [s]")
-    ax1.set_ylabel("E/E[0]")
-    ax2.set_ylabel("TotE/TotE[0]", color="C3")
+    ax1.set_ylabel("$E/|E_0|$")
+
+    ax2.set_ylabel("Total $\Delta E / E_0$", color="C3")
     ax2.tick_params(axis="y", labelcolor="C3")
+
+    ax1.axhline(0, linestyle="-", color="black", linewidth=0.5)
+    ax2.axhline(0, linestyle="-", color="red", linewidth=0.5)
 
     if save_fname is not None:
         plt.savefig(save_fname)
@@ -43,14 +49,28 @@ def plot_waveform(h, t, ax=None, save_fname=None):
     return ax
 
 
-def plot_velocity(vel, t, ax=None, save_fname=None):
+def plot_velocity(vel, t, ax=None, save_fname=None, escape_vel=None):
     if ax is None:
         fig, ax = plt.subplots()
     vel = get_mag(vel)
     rel_vel = vel / vel[0]
-    ax.scatter(t, rel_vel, c=rel_vel, cmap="Blues", s=0.75)
+    ax.scatter(t, rel_vel, c=rel_vel, cmap=VEL_CMAP, s=0.75)
     ax.set_xlabel("t [s]")
-    ax.set_ylabel(r"|\vec{v}| / |\vec{v}|[0]")
+    ax.set_ylabel(r"$|\vec{v}/\vec{v}_0|$")
+
+    if escape_vel is not None:
+        ax.axhline(escape_vel, linestyle="--", color="red", linewidth=0.5)
+        ## anotate axhline with text at y=escape_vel
+        ax.text(
+            0.1,
+            escape_vel,
+            "escape velocity",
+            color="red",
+            fontsize=8,
+            ha="center",
+            va="bottom",
+        )
+
     if save_fname is not None:
         plt.savefig(save_fname)
     return ax
@@ -67,7 +87,7 @@ def plot_orbit(pos, vel=[], ax=None, save_fname=None):
         vel = get_mag(vel[valid_idx, :])
         rel_vel = vel / vel[0]
         ax.scatter(
-            pos[valid_idx, 0], pos[valid_idx, 1], s=0.75, c=rel_vel, cmap="Blues"
+            pos[valid_idx, 0], pos[valid_idx, 1], s=0.75, c=rel_vel, cmap=VEL_CMAP
         )
     else:
         ax.plot(pos[valid_idx, 0], pos[valid_idx, 1], linewidth=0.5, c="white")

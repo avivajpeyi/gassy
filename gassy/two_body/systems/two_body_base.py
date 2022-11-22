@@ -15,17 +15,18 @@ class TwoBodyBase:
         M: float,
         init_x: float,
         init_vy: Optional[float] = None,
+        continue_on_error: Optional[bool] = False,
     ):
         self.m = m * Msol
         self.M = M * Msol
         self.r = np.array([init_x, 0]) * Rsol
 
         if init_vy is None:
-            init_vy = self._orbital_vel(self.r[0])
+            init_vy = self._orbital_vel(self.rmag)
 
         self.v = np.array([0, init_vy])
         self.init_y = self.pack_data()
-        self.bound_orbit_check()
+        self.bound_orbit_check(continue_on_error)
 
     def bound_orbit_check(self, continue_on_error=False):
         msg = (
@@ -110,17 +111,30 @@ class TwoBodyBase:
             return OrbitType.BOUND
         return OrbitType.UNBOUND
 
-    def update(self, pos_vel_array: np.ndarray) -> np.ndarray:
+    def update(self, pos_vel_array: np.ndarray):
         """Updates the system's position and velocity (pos_vel_array: [x, y, vx, vy])"""
         self.r = pos_vel_array[0:2]
         self.v = pos_vel_array[2:4]
-        return self.pack_data()
 
-    def pack_data(self) -> np.ndarray:
-        """Returns [x, y, vx, vy, Ek, Egpe, L, M00 M01 M10, M11]"""
-        return np.array(
-            [*self.r, *self.v, self.Ek, self.Egpe, self.L, *self.mass_moment]
-        )
+    def pack_data(self, all_data: Optional[bool] = False) -> np.ndarray:
+        """pack two-body data into an array
+
+        if all_data:
+            Returns [x, y, vx, vy, Ek, Egpe, L, M00 M01 M10, M11]
+        else:
+            Returns [x, y, vx, vy]
+        """
+        if all_data:
+            data = np.array(
+                [*self.r, *self.v, self.Ek, self.Egpe, self.L, *self.mass_moment]
+            )
+        else:
+            data = np.array([*self.r, *self.v])
+        return data
+
+    @property
+    def data_dim(self):
+        return self.pack_data(all_data=True).shape[0]
 
     @property
     def label(self):

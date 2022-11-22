@@ -12,8 +12,8 @@ CLEANUP = False
 
 class TestTwoBodyEvolver(unittest.TestCase):
     def setUp(self) -> None:
-        self.body_kwgs = dict(m=1, M=1, init_x=-1)
-        self.evol_kwgs = dict(num_periods=2, max_steps=10000)
+        self.body_kwgs = dict(m=1, M=10, init_x=-1)
+        self.evol_kwgs = dict(num_periods=10, max_steps=10000)
         self.outdir = f"{DIR}/test_plots/evolver"
         os.makedirs(self.outdir, exist_ok=True)
 

@@ -30,17 +30,29 @@ class Evolver:
         self.history = self.evolve()
 
     def evolve(self):
-        y0, t = self.two_body.pack_data(), self.t
-        ode_out = odeint(
-            self.dydt, y0=y0, t=t, args=(self.two_body,), atol=1e-12, rtol=1e-12
+        evolved_pos_vel = odeint(
+            self.dydt,
+            y0=self.two_body.pack_data(),
+            t=self.t,
+            args=(self.two_body,),
+            atol=1e-12,
+            rtol=1e-12,
         )
-        return History.from_ode_out(ode_out, t)
+        return self._generate_two_body_history(evolved_pos_vel)
+
+    def _generate_two_body_history(self, pos_vel: np.ndarray) -> History:
+        num_points = len(pos_vel)
+        two_body_data = np.zeros((num_points, self.two_body.data_dim))
+        for i in range(num_points):
+            self.two_body.update(pos_vel[i])
+            two_body_data[i] = self.two_body.pack_data(all_data=True)
+        return History.from_ode_out(two_body_data, self.t)
 
     def dydt(self, y, t, two_body_system: TwoBodyBase):
-        pos, vel = y[:2], y[2:4]
+        pos, vel = y[0:2], y[2:4]
         dpos_dt, dvel_dt = vel, two_body_system.accel
-        extra_data = two_body_system.update(
+        two_body_system.update(
             y
         )  # update the system's position and velocity for next step
-        dydt = np.concatenate((dpos_dt, dvel_dt, extra_data[4:11]))
+        dydt = np.concatenate((dpos_dt, dvel_dt))
         return dydt

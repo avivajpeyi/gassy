@@ -44,6 +44,7 @@ class WaveformGenerator:
             ke=self.history.Ek,
             gpe=self.history.Egpe,
             t=self.history.time,
+            vel=self.history.vel,
             h=h,
             label=self.two_body_sys.label,
             save_fname=save_fname,

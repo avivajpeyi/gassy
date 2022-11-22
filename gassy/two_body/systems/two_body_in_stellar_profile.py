@@ -17,8 +17,9 @@ class TwoBodyInStellarProfile(TwoBodyBase):
         init_vy: float,
         n: Optional[float] = None,
         mesa_profile_fname: Optional[str] = None,
+        continue_on_error: bool = False,
     ):
-        super().__init__(m, M, init_x, init_vy)
+        super().__init__(m, M, init_x, init_vy, continue_on_error)
         self.stellar_profile = PolytropicStar(n=n, mass=M, radius=1)
 
     @property
