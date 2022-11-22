@@ -6,12 +6,12 @@ from gassy.two_body import WaveformGenerator
 
 DIR = os.path.abspath(os.path.dirname(__file__))
 
-CLEANUP = False
+CLEANUP = True
 
 
 class TestWaveformGenerator(unittest.TestCase):
     def setUp(self) -> None:
-        self.kwgs = dict(m=1, M=20, r=-1, num_periods=1000)
+        self.kwgs = dict(m=1, M=20, r=-1, num_periods=0.1)
         self.outdir = f"{DIR}/test_plots/waveform"
         os.makedirs(self.outdir, exist_ok=True)
 

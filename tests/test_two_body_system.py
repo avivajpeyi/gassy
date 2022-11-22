@@ -14,7 +14,7 @@ class TestTwoBodyBasics(unittest.TestCase):
         self.assertTrue(Fg[0] > 0)  # should be towards +ive x dir
 
         # give object a 'kick'
-        bodies.update(np.array([-10, 0, 1e12, 0]))
+        bodies.update(np.array([-10, 0, 1e30, 0]))
         self.assertEqual(bodies.orbit_type, OrbitType.UNBOUND)
         self.assertTrue(bodies.escape_vel < np.linalg.norm(bodies.v))
         with self.assertWarns(Warning):
