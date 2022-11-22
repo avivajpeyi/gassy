@@ -3,10 +3,8 @@ name: Install and Pytest
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  paths:
-    - gassy/**
+    paths:
+      - gassy/**
 
 jobs:
   build:
