@@ -1,0 +1,13 @@
+main.pdf
+*.aux
+*.bbl
+*.blg
+*.log
+*.fls
+*.synctex.gz
+*.fdb_latexmk
+figures/data/*.ipynb
+figures/*.ipynb
+gitlinks.tex
+*.synctex.gz
+out/
