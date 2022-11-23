@@ -9,16 +9,14 @@ from .two_body_in_stellar_profile import TwoBodyInStellarProfile
 def create_two_body_system(
     m: float,
     M: float,
-    init_x: float,
+    r: float,
     init_vy: Optional[float] = None,
     drag_coeff: Optional[float] = None,
     stellar_polytropic_index: Optional[float] = None,
     mesa_profile_fname: Optional[str] = None,
     continue_on_error: Optional[bool] = False,
 ) -> TwoBodyBase:
-    kwargs = dict(
-        m=m, M=M, init_x=init_x, init_vy=init_vy, continue_on_error=continue_on_error
-    )
+    kwargs = dict(m=m, M=M, r=r, init_vy=init_vy, continue_on_error=continue_on_error)
     if drag_coeff is not None:
         return TwoBodyConstDrag(drag_coeff=drag_coeff, **kwargs)
     elif mesa_profile_fname is not None:

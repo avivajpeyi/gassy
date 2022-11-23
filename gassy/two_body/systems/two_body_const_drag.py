@@ -8,13 +8,13 @@ class TwoBodyConstDrag(TwoBodyBase):
         self,
         m: float,
         M: float,
-        init_x: float,
+        r: float,
         init_vy: float,
         drag_coeff: float,
         continue_on_error: bool = False,
     ):
         self.drag_coeff = drag_coeff
-        super().__init__(m, M, init_x, init_vy, continue_on_error)
+        super().__init__(m, M, r, init_vy, continue_on_error)
 
     @property
     def drag_force(self) -> np.ndarray:

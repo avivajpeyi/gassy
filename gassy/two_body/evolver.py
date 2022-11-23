@@ -26,10 +26,9 @@ class Evolver:
                 f"Too many steps requested {self.n_timesteps}. Reducing to first {max_steps} steps"
             )
         self.t = self.t[0:max_steps]
-        print(f"{self.n_timesteps} evolutions!")
         self.history = self.evolve()
 
-    def evolve(self):
+    def evolve(self) -> History:
         evolved_pos_vel = ode_driver(
             fun=self.dydt,
             y0=self.two_body.pack_data(),
@@ -47,7 +46,7 @@ class Evolver:
             two_body_data[i] = self.two_body.pack_data(all_data=True)
         return History.from_ode_out(two_body_data, self.t)
 
-    def dydt(self, t, y, two_body_system: TwoBodyBase):
+    def dydt(self, t, y, two_body_system: TwoBodyBase) -> np.ndarray:
         pos, vel = y[0:2], y[2:4]
         dpos_dt, dvel_dt = vel, two_body_system.accel
         two_body_system.update(

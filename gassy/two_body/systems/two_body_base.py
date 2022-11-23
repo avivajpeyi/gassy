@@ -13,13 +13,13 @@ class TwoBodyBase:
         self,
         m: float,
         M: float,
-        init_x: float,
+        r: float,
         init_vy: Optional[float] = None,
         continue_on_error: Optional[bool] = False,
     ):
         self.m = m * Msol
         self.M = M * Msol
-        self.r = np.array([init_x, 0]) * Rsol
+        self.r = np.array([r, 0]) * Rsol
 
         if init_vy is None:
             init_vy = self._orbital_vel(self.rmag)
