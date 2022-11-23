@@ -1,9 +1,9 @@
 from typing import Optional
 
 import numpy as np
-from scipy.integrate import odeint
 
 from .history import History
+from .ode_driver import ode_driver
 from .systems import TwoBodyBase
 
 
@@ -30,13 +30,12 @@ class Evolver:
         self.history = self.evolve()
 
     def evolve(self):
-        evolved_pos_vel = odeint(
-            self.dydt,
+        evolved_pos_vel = ode_driver(
+            fun=self.dydt,
             y0=self.two_body.pack_data(),
             t=self.t,
             args=(self.two_body,),
-            atol=1e-12,
-            rtol=1e-12,
+            # type='odeint'
         )
         return self._generate_two_body_history(evolved_pos_vel)
 
@@ -48,7 +47,7 @@ class Evolver:
             two_body_data[i] = self.two_body.pack_data(all_data=True)
         return History.from_ode_out(two_body_data, self.t)
 
-    def dydt(self, y, t, two_body_system: TwoBodyBase):
+    def dydt(self, t, y, two_body_system: TwoBodyBase):
         pos, vel = y[0:2], y[2:4]
         dpos_dt, dvel_dt = vel, two_body_system.accel
         two_body_system.update(

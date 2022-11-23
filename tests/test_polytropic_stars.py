@@ -4,10 +4,11 @@ import unittest
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pytest
 
 from gassy.stellar_profiles.polytropic_star import PolytropicStar
 
-CLEANUP = False
+CLEANUP = True
 DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -16,10 +17,16 @@ class TestPolytropicProfile(unittest.TestCase):
         self.outdir = f"{DIR}/test_plots/polytropic"
         os.makedirs(self.outdir, exist_ok=True)
 
+    def tearDown(self):
+        if CLEANUP:
+            if os.path.isdir(self.outdir):
+                shutil.rmtree(self.outdir)
+
     def test_polytropic_stars_roots(self):
         star = PolytropicStar(n=3.5)
         self.assertFalse(np.isnan(star.xi_root))
 
+    @pytest.mark.slow
     def test_variety_of_stars_plot(self):
         fig, ax = plt.subplots(1, 5, figsize=(16, 4))
         for i, n in enumerate(np.arange(1, 5, 0.25)):

@@ -2,10 +2,11 @@ import os
 import shutil
 import unittest
 
+import pytest
+
 from gassy.two_body import Evolver, create_two_body_system
 
 DIR = os.path.abspath(os.path.dirname(__file__))
-
 
 CLEANUP = True
 
@@ -14,6 +15,7 @@ class TestTwoBodyEvolver(unittest.TestCase):
     def setUp(self) -> None:
         self.body_kwgs = dict(m=1, M=10, init_x=-1)
         self.evol_kwgs = dict(num_periods=0.1, max_steps=200)
+        self.evol_kwgs_slow = dict(num_periods=10, max_steps=10000)
         self.outdir = f"{DIR}/test_plots/evolver"
         os.makedirs(self.outdir, exist_ok=True)
 
@@ -21,17 +23,18 @@ class TestTwoBodyEvolver(unittest.TestCase):
         if CLEANUP:
             shutil.rmtree(self.outdir)
 
-    def test_no_drag_evol(self):
+    def test_evols(self):
         two_body_system = create_two_body_system(**self.body_kwgs)
-        two_body_evolver = Evolver(two_body_system, **self.evol_kwgs)
-        two_body_evolver.history.plot(f"{self.outdir}/no_drag.png")
-
-    def test_small_drag(self):
+        Evolver(two_body_system, **self.evol_kwgs)
         two_body_system = create_two_body_system(drag_coeff=1e-5, **self.body_kwgs)
-        two_body_evolver = Evolver(two_body_system, **self.evol_kwgs)
-        two_body_evolver.history.plot(f"{self.outdir}/small_drag.png")
+        Evolver(two_body_system, **self.evol_kwgs)
 
-    def test_large_drag(self):
-        two_body_system = create_two_body_system(drag_coeff=1e-4, **self.body_kwgs)
-        two_body_evolver = Evolver(two_body_system, **self.evol_kwgs)
-        two_body_evolver.history.plot(f"{self.outdir}/large_drag.png")
+    @pytest.mark.slow
+    def test_history_plots(self):
+        zero_drag_system = create_two_body_system(**self.body_kwgs)
+        two_body_evolver = Evolver(zero_drag_system, **self.evol_kwgs_slow)
+        two_body_evolver.history.plot(f"{self.outdir}/zero_drag.png")
+
+        drag_system = create_two_body_system(drag_coeff=1e-4, **self.body_kwgs)
+        two_body_evolver = Evolver(drag_system, **self.evol_kwgs_slow)
+        two_body_evolver.history.plot(f"{self.outdir}/some_drag.png")
