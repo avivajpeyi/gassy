@@ -16,8 +16,8 @@ class TestWaveformGenerator(unittest.TestCase):
         self.outdir = f"{DIR}/test_plots/waveform"
         os.makedirs(self.outdir, exist_ok=True)
         self.plot_kwrgs = dict(distance=1000, save_dir=self.outdir)
-        self.kwgs = dict(m=1, M=20, r=-1, num_periods=0.1, cache_dir=self.outdir)
-        self.slow_kwgs = dict(m=1, M=20, r=-1, num_periods=10)
+        self.kwgs = dict(m=1, M=10, r=-1, num_periods=0.1, cache_dir=self.outdir)
+        self.slow_kwgs = dict(m=1, M=10, r=-1, num_periods=10)
 
     def tearDown(self) -> None:
         if CLEANUP and os.path.exists(self.outdir):
@@ -38,8 +38,15 @@ class TestWaveformGenerator(unittest.TestCase):
 
     @pytest.mark.slow
     def test_waveform_generator_plots(self):
-        waveform_generator = WaveformGenerator(**self.slow_kwgs)
+        global CLEANUP
+        CLEANUP = False
+
+        waveform_generator = WaveformGenerator.from_evol_inital_conditions(
+            **self.slow_kwgs
+        )
         waveform_generator.plot(**self.plot_kwrgs)
 
-        waveform_generator = WaveformGenerator(**self.slow_kwgs, drag_coeff=1e-8)
+        waveform_generator = WaveformGenerator.from_evol_inital_conditions(
+            **self.slow_kwgs, drag_coeff=1e20
+        )
         waveform_generator.plot(**self.plot_kwrgs)

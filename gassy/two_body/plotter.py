@@ -17,7 +17,8 @@ def plot_energy(ke, gpe, t, ax=None, save_fname=None):
     ax1.plot(t, gpe / np.abs(gpe[0]), label="Gravitational", color="C2")
     ax2.plot(t, (tot - tot[0]) / tot[0], label="Total", color="C3", linestyle="--")
 
-    ax1.legend(frameon=True, loc="upper left")
+    ax1.legend(frameon=False, loc="upper left")
+    ax2.legend(frameon=False, loc="upper right")
     ax1.set_xlabel("t [s]")
     ax1.set_ylabel("$E/|E_0|$")
 
@@ -76,6 +77,18 @@ def plot_velocity(vel, t, ax=None, save_fname=None, escape_vel=None):
     return ax
 
 
+def plot_r(pos, t, ax=None, save_fname=None):
+    if ax is None:
+        fig, ax = plt.subplots()
+    r = get_mag(pos)
+    ax.plot(t, r / Rsol, color="C3")
+    ax.set_xlabel("t [s]")
+    ax.set_ylabel("r [$R_{\odot}$]")
+    if save_fname is not None:
+        plt.savefig(save_fname)
+    return ax
+
+
 def plot_orbit(pos, vel=[], ax=None, save_fname=None):
     if ax is None:
         fig, ax = plt.subplots()
@@ -124,6 +137,10 @@ def plot_diagnostic(
     if len(vel) > 0:
         ax_vel = fig.add_subplot(gs[1, 2:4], sharex=ax_energy)
         plot_velocity(vel, t, ax=ax_vel)
+        ax_r = ax_vel.twinx()
+        ax_r.tick_params(axis="y", labelcolor="C3")
+        ax_r.set_ylabel("r [$R_{\odot}$]", color="C3")
+        plot_r(pos, t, ax=ax_r)
 
     if len(h) > 0:
         ax_strain = fig.add_subplot(gs[2, 2:4], sharex=ax_energy)

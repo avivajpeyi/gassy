@@ -24,5 +24,5 @@ class TwoBodyConstDrag(TwoBodyBase):
     @property
     def label(self):
         return (
-            f"Point particles: {self._m_label}, drag 'force'= -{self.drag_coeff}*vhat"
+            f"Point particles: {self._m_label}, drag 'force'= -{self.drag_coeff}*(v^2)"
         )

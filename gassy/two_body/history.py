@@ -1,5 +1,6 @@
 import numpy as np
 
+from ..constants import Rsol
 from .plotter import plot_diagnostic
 
 
@@ -9,13 +10,19 @@ class History:
     """
 
     def __init__(self, pos, vel, time, mass_moment, Ek, Egpe, L):
-        self.pos = pos
-        self.vel = vel
-        self.time = time
-        self.mass_moment = mass_moment
-        self.Ek = Ek
-        self.Egpe = Egpe
-        self.L = L
+        mask = self.get_mask(pos)
+        self.pos = pos[mask, :]
+        self.vel = vel[mask, :]
+        self.time = time[mask]
+        self.mass_moment = mass_moment[mask, :]
+        self.Ek = Ek[mask]
+        self.Egpe = Egpe[mask]
+        self.L = L[mask]
+
+    def get_mask(self, pos):
+        r = np.sqrt(pos[:, 0] ** 2 + pos[:, 1] ** 2) / Rsol
+        mask = (r < r[0]) & (r > 0.01)
+        return mask
 
     @staticmethod
     def __check_fname(fname):
