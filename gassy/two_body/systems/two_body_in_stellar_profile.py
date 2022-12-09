@@ -3,7 +3,7 @@ from typing import Optional
 import numpy as np
 
 from gassy.constants import G, pi
-from gassy.stellar_profiles.polytropic_star import PolytropicStar
+from gassy.stellar_profiles.stellar_profile import StellarProfile
 
 from .two_body_base import TwoBodyBase
 
@@ -20,7 +20,9 @@ class TwoBodyInStellarProfile(TwoBodyBase):
         continue_on_error: bool = False,
     ):
         super().__init__(m, M, r, init_vy, continue_on_error)
-        self.stellar_profile = PolytropicStar(n=n, mass=M, radius=1)
+        self.stellar_profile = StellarProfile.load_polytropic_profile(
+            n=n, mass=M, radius=r
+        )
 
     @property
     def drag_force(self) -> np.ndarray:
@@ -29,5 +31,9 @@ class TwoBodyInStellarProfile(TwoBodyBase):
         c_s, rho = star.c_s(self.r), star.rho(self.r)
         Fd = 4 * pi * G**2
         Fd *= self.m**2 * rho * self.vmag
-        Fd /= np.pow(c_s**2 + self.vmag**2, 1.5)
-        return -self.drag_coeff * self.v / self.vmag
+        Fd /= np.power(c_s**2 + self.vmag**2, 1.5)
+        return -Fd * self.vhat
+
+    @property
+    def label(self):
+        return f"point BH - {self.stellar_profile.label}: {self._m_label}"

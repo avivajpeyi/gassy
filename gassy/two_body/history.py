@@ -9,19 +9,37 @@ class History:
     Stores the data for the two body system at each timestep.
     """
 
-    def __init__(self, pos, vel, time, mass_moment, Ek, Egpe, L):
-        mask = self.get_mask(pos)
-        self.pos = pos[mask, :]
-        self.vel = vel[mask, :]
-        self.time = time[mask]
-        self.mass_moment = mass_moment[mask, :]
-        self.Ek = Ek[mask]
-        self.Egpe = Egpe[mask]
-        self.L = L[mask]
+    def __init__(self, pos, vel, time, mass_moment, Ek, Egpe, L, nan_invalid=True):
+        mask = self.get_valid_pos_mask(pos)
 
-    def get_mask(self, pos):
+        if nan_invalid:
+            pos[~mask, :] = np.nan
+            vel[~mask, :] = np.nan
+            time[~mask] = np.nan
+            mass_moment[~mask, :] = np.nan
+            Ek[~mask] = np.nan
+            Egpe[~mask] = np.nan
+            L[~mask] = np.nan
+        else:
+            pos = pos[mask, :]
+            vel = vel[mask, :]
+            time = time[mask]
+            mass_moment = mass_moment[mask, :]
+            Ek = Ek[mask]
+            Egpe = Egpe[mask]
+            L = L[mask]
+
+        self.pos = pos
+        self.vel = vel
+        self.time = time
+        self.mass_moment = mass_moment
+        self.Ek = Ek
+        self.Egpe = Egpe
+        self.L = L
+
+    def get_valid_pos_mask(self, pos):
         r = np.sqrt(pos[:, 0] ** 2 + pos[:, 1] ** 2) / Rsol
-        mask = (r < r[0]) & (r > 0.01)
+        mask = (0.01 < r) & (r <= r[0])
         return mask
 
     @staticmethod

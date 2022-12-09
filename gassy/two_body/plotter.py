@@ -94,16 +94,13 @@ def plot_orbit(pos, vel=[], ax=None, save_fname=None):
         fig, ax = plt.subplots()
     ax.set_facecolor("black")
 
-    valid_idx = np.isfinite(pos[:, 0])
-    pos = pos[valid_idx, :] / Rsol
+    pos = pos / Rsol
     if len(vel) > 0:
-        vel = get_mag(vel[valid_idx, :])
+        vel = get_mag(vel)
         rel_vel = vel / vel[0]
-        ax.scatter(
-            pos[valid_idx, 0], pos[valid_idx, 1], s=0.75, c=rel_vel, cmap=VEL_CMAP
-        )
+        ax.scatter(pos[:, 0], pos[:, 1], s=0.75, c=rel_vel, cmap=VEL_CMAP)
     else:
-        ax.plot(pos[valid_idx, 0], pos[valid_idx, 1], linewidth=0.5, c="white")
+        ax.plot(pos[:, 0], pos[:, 1], linewidth=0.5, c="white")
 
     ax.scatter(0, 0, marker="*", color="red")
     ax.scatter(pos[0, 0], pos[0, 1], marker="o", color="white")
@@ -124,33 +121,49 @@ def plot_orbit(pos, vel=[], ax=None, save_fname=None):
 
 
 def plot_diagnostic(
-    pos, ke, gpe, t, h=[], vel=[], save_fname="orbit_diagnostic.png", label=None
+    pos,
+    ke,
+    gpe,
+    t,
+    h=[],
+    vel=[],
+    save_fname="",
+    label=None,
 ):
     fig = plt.figure(figsize=(12, 6))
     gs = GridSpec(3, 4)
+    axes_dict = dict()
     ax_orbit = fig.add_subplot(gs[:, 0:2])
     ax_energy = fig.add_subplot(gs[0, 2:4])
+    axes_dict["orbit"] = ax_orbit
+    axes_dict["energy"] = ax_energy
 
-    plot_orbit(pos, vel, ax=ax_orbit)
-    plot_energy(ke, gpe, t, ax=ax_energy)
+    plot_orbit(pos, vel, ax=axes_dict["orbit"])
+    plot_energy(ke, gpe, t, ax=axes_dict["energy"])
 
     if len(vel) > 0:
-        ax_vel = fig.add_subplot(gs[1, 2:4], sharex=ax_energy)
+        ax_vel = fig.add_subplot(gs[1, 2:4])
         plot_velocity(vel, t, ax=ax_vel)
         ax_r = ax_vel.twinx()
         ax_r.tick_params(axis="y", labelcolor="C3")
         ax_r.set_ylabel("r [$R_{\odot}$]", color="C3")
         plot_r(pos, t, ax=ax_r)
+        axes_dict["vel"] = ax_vel
+        axes_dict["r"] = ax_r
 
     if len(h) > 0:
-        ax_strain = fig.add_subplot(gs[2, 2:4], sharex=ax_energy)
+        ax_strain = fig.add_subplot(gs[2, 2:4])
         plot_waveform(h, t, ax=ax_strain)
+        axes_dict["strain"] = ax_strain
 
     if label is not None:
         plt.suptitle(label)
 
-    plt.tight_layout()
-    plt.savefig(save_fname)
+    if save_fname:
+        plt.tight_layout()
+        plt.savefig(save_fname)
+    else:
+        return axes_dict
 
 
 def get_mag(x: np.ndarray):

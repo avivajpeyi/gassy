@@ -5,6 +5,8 @@ Calculates the gravitational waveform for a binary system with a given mass rati
 import os
 from typing import Optional
 
+import matplotlib.pyplot as plt
+
 from . import Evolver, History, Strain, create_two_body_system
 from .plotter import plot_diagnostic
 
@@ -14,10 +16,13 @@ class WaveformGenerator:
         self,
         evolution_history: History,
         label: str,
+        stellar_profile: Optional = None,
     ):
         self.history = evolution_history
         self.strain = Strain(self.history.mass_moment)
         self.label = label
+        if stellar_profile is not None:
+            self.stellar_profile = stellar_profile
 
     @classmethod
     def from_evol_inital_conditions(
@@ -44,7 +49,10 @@ class WaveformGenerator:
         if not os.path.isdir(cache_dir):
             os.makedirs(cache_dir)
         history.save(f"{cache_dir}/{two_body_sys.label}.npz")
-        return cls(history, two_body_sys.label)
+        stellar_profile = None
+        if hasattr(two_body_sys, "stellar_profile"):
+            stellar_profile = two_body_sys.stellar_profile
+        return cls(history, two_body_sys.label, stellar_profile=stellar_profile)
 
     @classmethod
     def from_cache(cls, cache_fname):
@@ -56,10 +64,11 @@ class WaveformGenerator:
         h = self.strain.h(distance=distance, theta=theta, phi=phi)
         return self.history.time, h
 
-    def plot(self, distance, theta=0, phi=0, save_dir=""):
+    def plot(self, distance, theta=0, phi=0, save_dir="."):
         t, h = self(distance, theta, phi)
-        save_fname = f"{save_dir}/{self.label}.png" if len(save_dir) > 0 else ""
-        plot_diagnostic(
+        save_fname = f"{save_dir}/{self.label}.png"
+
+        axes_dict = plot_diagnostic(
             pos=self.history.pos,
             ke=self.history.Ek,
             gpe=self.history.Egpe,
@@ -67,5 +76,9 @@ class WaveformGenerator:
             vel=self.history.vel,
             h=h,
             label=self.label,
-            save_fname=save_fname,
         )
+        if hasattr(self, "stellar_profile"):
+            self.stellar_profile.plot_grid(axes_dict["orbit"], zorder=-10)
+
+        plt.tight_layout()
+        plt.savefig(save_fname)

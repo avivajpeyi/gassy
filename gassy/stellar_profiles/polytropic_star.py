@@ -92,7 +92,7 @@ class PolytropicStar:
         return np.abs(rho_c)
 
     @cached_property
-    def rho(self) -> List[float]:
+    def rho(self) -> np.ndarray:
         rho_c, theta, n = self.rho_c, self.theta, self.n
         rho = rho_c * np.power(theta, n, dtype=complex)
         return np.abs(rho)
@@ -106,13 +106,13 @@ class PolytropicStar:
         return np.abs(r_n)
 
     @cached_property
-    def r(self) -> List[float]:
+    def r(self) -> np.ndarray:
         r_n, xi = self.r_n, self.xi
         r = r_n * xi
         return np.abs(r)
 
     @cached_property
-    def m_e(self) -> List[float]:
+    def m_e(self) -> np.ndarray:
         r_n, xi, rho_c = self.r_n, self.xi, self.rho_c
         dxi = np.interp(xi, xi, self.d_theta)
         m = (
@@ -126,7 +126,7 @@ class PolytropicStar:
         return np.abs(m)
 
     @cached_property
-    def c_s(self) -> List[float]:
+    def c_s(self) -> np.ndarray:
         gamma = 1.0 + 1.0 / self.n
         c_s = np.sqrt(gamma * self.P / self.rho)
         assert len(c_s[np.isnan(c_s)]) == 0, c_s
@@ -155,19 +155,19 @@ class PolytropicStar:
         ax[1].set_ylim(0, self.MaxM)
 
         ax[2].plot(self.r / Rsol, self.P, **kwargs)
-        ax[2].set_ylabel(r"$P\ [dyne/cm^{2}]$")
+        ax[2].set_ylabel(r"$P\ [dyne/m^{2}]$ (?)")
         ax[2].set_xlabel("$r\ [R_{\odot}]$")
         ax[2].set_yscale("log")
         ax[2].set_xlim(0, self.MaxR)
 
         ax[3].plot(self.r / Rsol, self.rho, **kwargs)
-        ax[3].set_ylabel(r"$\rho\ [g/cm^3]$")
+        ax[3].set_ylabel(r"$\rho\ [kg/m^3]$ (?)")
         ax[3].set_xlabel("$r\ [R_{\odot}]$")
         ax[3].set_yscale("log")
         ax[3].set_xlim(0, self.MaxR)
 
         ax[4].plot(self.r / Rsol, self.c_s, **kwargs)
-        ax[4].set_ylabel(r"$c_s\ [cm/s]$")
+        ax[4].set_ylabel(r"$c_s\ [m/s]$ (?)")
         ax[4].set_xlabel("$r\ [R_{\odot}]$")
         ax[4].set_yscale("log")
         ax[4].set_xlim(0, self.MaxR)

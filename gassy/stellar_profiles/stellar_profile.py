@@ -9,7 +9,7 @@ from gassy.stellar_profiles.polytropic_star import PolytropicStar
 
 
 class StellarProfile:
-    def __init__(self, q, rho, c_s):
+    def __init__(self, q, rho, c_s, label=""):
         self.q = smooth(q)
         self.minr, self.R = min(self.q), max(self.q)
 
@@ -22,15 +22,17 @@ class StellarProfile:
         self._M_e_interp, self.M_e_range = self._build_M_e_interp(self.q)
         self.M_e = np.vectorize(self._M_e)
 
+        self.label = label
+
     @classmethod
     def load_matlab_profile(cls, profile_name):
         profile = read_profile(profile_name)
-        return cls(profile.q, profile.rho, profile.c_s)
+        return cls(profile.q, profile.rho, profile.c_s, label=f"MESA {profile_name}")
 
     @classmethod
     def load_polytropic_profile(cls, n, mass=1, radius=1):
-        star = PolytropicStar(n=n, mass=1, radius=1)
-        return cls(star.r, star.rho, star.c_s)
+        star = PolytropicStar(n=n, mass=mass, radius=radius)
+        return cls(star.r, star.rho, star.c_s, label=f"Polytropic n={n}")
 
     def _build_rho_interp(self, q, rho) -> Tuple[interp1d, List[float]]:
         rho_interp = interp(q, rho)

@@ -138,7 +138,7 @@ class TwoBodyBase:
 
     @property
     def label(self):
-        return f"Point particles: {self._m_label}"
+        return f"NO DRAG Point particles: {self._m_label}"
 
     @property
     def _m_label(self):
