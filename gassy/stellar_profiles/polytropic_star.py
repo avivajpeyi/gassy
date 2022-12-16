@@ -8,7 +8,7 @@ from scipy.integrate import odeint
 from scipy.interpolate import interp1d
 from scipy.optimize import root
 
-from gassy.constants import G, Msol, Rsol
+from gassy.constants import G, M_sun, R_sun
 
 MAX_XI = 20
 
@@ -61,8 +61,8 @@ class PolytropicStar:
     def K(self) -> float:
         n, mass, radius = self.n, self.MaxM, self.MaxR
         term1 = G / (n + 1)
-        term2 = np.power(mass * Msol, 1.0 - 1.0 / n, dtype=complex) * np.power(
-            radius * Rsol, -1.0 + 3.0 / n, dtype=complex
+        term2 = np.power(mass * M_sun, 1.0 - 1.0 / n, dtype=complex) * np.power(
+            radius * R_sun, -1.0 + 3.0 / n, dtype=complex
         )
         term3 = 4 * np.pi
         term4 = np.power(self.xi_root, n + 1.0, dtype=complex) * np.power(
@@ -148,25 +148,25 @@ class PolytropicStar:
             ax[0].set_xscale("log")
         ax[0].set_ylim(0, 1)
 
-        ax[1].plot(self.r / Rsol, self.m_e / Msol, **kwargs)
+        ax[1].plot(self.r / R_sun, self.m_e / M_sun, **kwargs)
         ax[1].set_ylabel(r"$M\ [M_{\odot}]$")
         ax[1].set_xlabel("$r\ [R_{\odot}]$")
         ax[1].set_xlim(0, self.MaxR)
-        ax[1].set_ylim(0, self.MaxM)
+        # ax[1].set_ylim(0, self.MaxM)
 
-        ax[2].plot(self.r / Rsol, self.P, **kwargs)
+        ax[2].plot(self.r / R_sun, self.P, **kwargs)
         ax[2].set_ylabel(r"$P\ [dyne/m^{2}]$ (?)")
         ax[2].set_xlabel("$r\ [R_{\odot}]$")
         ax[2].set_yscale("log")
         ax[2].set_xlim(0, self.MaxR)
 
-        ax[3].plot(self.r / Rsol, self.rho, **kwargs)
+        ax[3].plot(self.r / R_sun, self.rho, **kwargs)
         ax[3].set_ylabel(r"$\rho\ [kg/m^3]$ (?)")
         ax[3].set_xlabel("$r\ [R_{\odot}]$")
         ax[3].set_yscale("log")
         ax[3].set_xlim(0, self.MaxR)
 
-        ax[4].plot(self.r / Rsol, self.c_s, **kwargs)
+        ax[4].plot(self.r / R_sun, self.c_s, **kwargs)
         ax[4].set_ylabel(r"$c_s\ [m/s]$ (?)")
         ax[4].set_xlabel("$r\ [R_{\odot}]$")
         ax[4].set_yscale("log")
@@ -175,7 +175,7 @@ class PolytropicStar:
         return ax
 
     @staticmethod
-    def lane_emden_solver(n, numpts=5000, max_xi=MAX_XI):
+    def lane_emden_solver(n, numpts=10000, max_xi=MAX_XI):
         """
         Solve the Lane-Emden equation for a polytropic star
 

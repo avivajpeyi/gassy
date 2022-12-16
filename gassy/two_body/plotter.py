@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.gridspec import GridSpec
 
-from gassy.constants import Rsol
+from gassy.constants import R_sun
 
 VEL_CMAP = "Blues_r"
 
@@ -81,7 +81,7 @@ def plot_r(pos, t, ax=None, save_fname=None):
     if ax is None:
         fig, ax = plt.subplots()
     r = get_mag(pos)
-    ax.plot(t, r / Rsol, color="C3")
+    ax.plot(t, r / R_sun, color="C3")
     ax.set_xlabel("t [s]")
     ax.set_ylabel("r [$R_{\odot}$]")
     if save_fname is not None:
@@ -94,7 +94,7 @@ def plot_orbit(pos, vel=[], ax=None, save_fname=None):
         fig, ax = plt.subplots()
     ax.set_facecolor("black")
 
-    pos = pos / Rsol
+    pos = pos / R_sun
     if len(vel) > 0:
         vel = get_mag(vel)
         rel_vel = vel / vel[0]
@@ -127,13 +127,21 @@ def plot_diagnostic(
     t,
     h=[],
     vel=[],
+    stellar_profile=None,
     save_fname="",
     label=None,
 ):
     fig = plt.figure(figsize=(12, 6))
-    gs = GridSpec(3, 4)
+    nrow, ncol = 3, 4
+    gs = GridSpec(nrow, ncol)
     axes_dict = dict()
     ax_orbit = fig.add_subplot(gs[:, 0:2])
+
+    if stellar_profile is not None:
+        ax_stellar_profile_0 = fig.add_subplot(gs[0, 2:4])
+        ax_stellar_profile_1 = fig.add_subplot(gs[1, 2:4])
+        ax_stellar_profile_2 = fig.add_subplot(gs[2, 2:4])
+
     ax_energy = fig.add_subplot(gs[0, 2:4])
     axes_dict["orbit"] = ax_orbit
     axes_dict["energy"] = ax_energy
@@ -155,6 +163,9 @@ def plot_diagnostic(
         ax_strain = fig.add_subplot(gs[2, 2:4])
         plot_waveform(h, t, ax=ax_strain)
         axes_dict["strain"] = ax_strain
+
+    if stellar_profile is not None:
+        stellar_profile.plot_grid(axes_dict["orbit"], zorder=-10)
 
     if label is not None:
         plt.suptitle(label)

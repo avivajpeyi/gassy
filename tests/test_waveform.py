@@ -18,7 +18,7 @@ class TestWaveformGenerator(unittest.TestCase):
         os.makedirs(self.outdir, exist_ok=True)
         self.plot_kwrgs = dict(distance=100 * kpc, save_dir=self.outdir)
         self.kwgs = dict(m=1, M=2, r=-1, num_periods=0.1, cache_dir=self.outdir)
-        self.slow_kwgs = dict(m=1, M=10, r=-100, num_periods=10)
+        self.slow_kwgs = dict(m=1, M=10, r=-100, num_periods=5.1)
 
     def tearDown(self) -> None:
         if CLEANUP and os.path.exists(self.outdir):

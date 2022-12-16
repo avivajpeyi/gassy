@@ -70,6 +70,10 @@ class StellarProfile:
     def plot_1d_profile_data(self, fname="1dprofile.png"):
         return plot_1d_profile_data(self, fname)
 
+    @property
+    def MaxM(self):
+        return self.M_e(self.R)
+
 
 def get_smooth_profile_functions(
     profile_name: str,

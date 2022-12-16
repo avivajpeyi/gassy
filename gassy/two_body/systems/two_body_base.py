@@ -3,7 +3,7 @@ from typing import Optional
 
 import numpy as np
 
-from gassy.constants import G, Msol, Rsol, kgm_s2, m_per_s, m_per_s2, pi
+from gassy.constants import G, M_sun, R_sun, kgm_s2, m_per_s, m_per_s2, pi
 
 from .orbit_type import OrbitType
 
@@ -17,9 +17,9 @@ class TwoBodyBase:
         init_vy: Optional[float] = None,
         continue_on_error: Optional[bool] = False,
     ):
-        self.m = m * Msol
-        self.M = M * Msol
-        self.r = np.array([r, 0]) * Rsol
+        self.m = m * M_sun
+        self.M = M * M_sun
+        self.r = np.array([r, 0]) * R_sun
 
         if init_vy is None:
             init_vy = self._orbital_vel(self.rmag)
@@ -27,6 +27,7 @@ class TwoBodyBase:
         self.v = np.array([0, init_vy])
         self.init_y = self.pack_data()
         self.bound_orbit_check(continue_on_error)
+        self.inspiral_time = self.period * self.Me / self.m
 
     def bound_orbit_check(self, continue_on_error=False):
         msg = (
@@ -75,8 +76,12 @@ class TwoBodyBase:
 
     @property
     def gravitational_force(self) -> np.ndarray:
-        f_mag = -G * self.m * self.M / self.rmag**2
+        # FIXME: use reduced mass?
+        f_mag = -G * self.m * self.Me / self.rmag**2
         return f_mag * self.rhat
+
+    # FIXME: calculate backreaction of the doner
+    #
 
     @property
     def drag_force(self) -> np.ndarray:
@@ -143,7 +148,7 @@ class TwoBodyBase:
     @property
     def _m_label(self):
         msun = r"$M_{\odot}$"
-        return f"m={self.m / Msol} {msun}, M={self.M / Msol} {msun}"
+        return f"m={self.m / M_sun} {msun}, M={self.M / M_sun} {msun}"
 
     def __repr__(self):
         return f"{self.label} [{self.orbit_type}]"

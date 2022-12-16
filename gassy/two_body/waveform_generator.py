@@ -7,6 +7,7 @@ from typing import Optional
 
 import matplotlib.pyplot as plt
 
+from ..constants import kpc
 from . import Evolver, History, Strain, create_two_body_system
 from .plotter import plot_diagnostic
 
@@ -61,10 +62,22 @@ class WaveformGenerator:
         return cls(history, label)
 
     def __call__(self, distance, theta=0, phi=0):
-        h = self.strain.h(distance=distance, theta=theta, phi=phi)
+        """Distance in kpc"""
+        h = self.strain.h(distance=distance * kpc, theta=theta, phi=phi)
         return self.history.time, h
 
     def plot(self, distance, theta=0, phi=0, save_dir="."):
+        """
+
+        Args:
+            distance: in kpc
+            theta:
+            phi:
+            save_dir:
+
+        Returns:
+
+        """
         t, h = self(distance, theta, phi)
         save_fname = f"{save_dir}/{self.label}.png"
 

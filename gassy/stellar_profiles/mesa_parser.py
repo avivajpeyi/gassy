@@ -3,6 +3,7 @@ import os
 import re
 
 import pandas as pd
+from astropy.constants import G, M_sun, R_sun, au, c, kpc
 from scipy.io import loadmat
 
 from gassy import constants
@@ -36,5 +37,5 @@ def read_profile(profile_name: str) -> pd.DataFrame:
     data["c_s"] = (
         data["c_s"] * 100
     )  # convert to cgs (i think?) #TODO: check with evgeni
-    data["q"] = data["q"] * constants.Rsol  # convert to cgs
+    data["q"] = data["q"] * constants.R_sun  # convert to cgs
     return data

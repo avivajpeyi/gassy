@@ -1,6 +1,12 @@
+import warnings
+
 from scipy.integrate import odeint, solve_ivp
 from scipy.integrate._ivp.base import OdeSolver
+from scipy.integrate.odepack import ODEintWarning
 from tqdm import tqdm
+
+warnings.filterwarnings("ignore", category=ODEintWarning)
+warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 
 class OdeSolverWithProgressBar(OdeSolver):

@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..constants import Rsol
+from ..constants import R_sun
 from .plotter import plot_diagnostic
 
 
@@ -9,7 +9,9 @@ class History:
     Stores the data for the two body system at each timestep.
     """
 
-    def __init__(self, pos, vel, time, mass_moment, Ek, Egpe, L, nan_invalid=True):
+    def __init__(
+        self, pos, vel, time, mass_moment, Ek, Egpe, L, nan_invalid=True, runtime=-1.0
+    ):
         mask = self.get_valid_pos_mask(pos)
 
         if nan_invalid:
@@ -36,9 +38,10 @@ class History:
         self.Ek = Ek
         self.Egpe = Egpe
         self.L = L
+        self.runtime = runtime
 
     def get_valid_pos_mask(self, pos):
-        r = np.sqrt(pos[:, 0] ** 2 + pos[:, 1] ** 2) / Rsol
+        r = np.sqrt(pos[:, 0] ** 2 + pos[:, 1] ** 2) / R_sun
         mask = (0.01 < r) & (r <= r[0])
         return mask
 
@@ -59,6 +62,7 @@ class History:
             kinetic_energy=self.Ek,
             gravitational_energy=self.Egpe,
             angular_momentum=self.L,
+            runtime=self.runtime,
         )
 
     @classmethod
@@ -74,10 +78,11 @@ class History:
             Ek=data["kinetic_energy"],
             Egpe=data["gravitational_energy"],
             L=data["angular_momentum"],
+            runtime=data["runtime"],
         )
 
     @classmethod
-    def from_ode_out(cls, y: np.ndarray, t: np.ndarray):
+    def from_ode_out(cls, y: np.ndarray, t: np.ndarray, runtime: float):
         assert y.shape == (len(t), 11)
         return cls(
             pos=y[:, 0:2],
@@ -87,6 +92,7 @@ class History:
             L=y[:, 6],
             mass_moment=y[:, 7:11],
             time=t,
+            runtime=runtime,
         )
 
     def plot(self, save_fname=""):

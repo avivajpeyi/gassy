@@ -19,10 +19,15 @@ class TwoBodyInStellarProfile(TwoBodyBase):
         mesa_profile_fname: Optional[str] = None,
         continue_on_error: bool = False,
     ):
-        super().__init__(m, M, r, init_vy, continue_on_error)
         self.stellar_profile = StellarProfile.load_polytropic_profile(
             n=n, mass=M, radius=r
         )
+        super().__init__(m, M, r, init_vy, continue_on_error)
+
+    @property
+    def Me(self):
+        """Mass of inner body inside from 0 to a"""
+        return self.stellar_profile.M_e(self.rmag)
 
     @property
     def drag_force(self) -> np.ndarray:
