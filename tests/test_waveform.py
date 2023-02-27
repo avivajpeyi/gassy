@@ -9,7 +9,7 @@ from gassy.two_body import WaveformGenerator, create_two_body_system
 
 DIR = os.path.abspath(os.path.dirname(__file__))
 
-CLEANUP = False
+CLEANUP = True
 
 
 class TestWaveformGenerator(unittest.TestCase):
