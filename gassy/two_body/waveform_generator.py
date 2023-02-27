@@ -79,7 +79,6 @@ class WaveformGenerator:
 
         """
         t, h = self(distance, theta, phi)
-        save_fname = f"{save_dir}/{self.label}.png"
 
         axes_dict = plot_diagnostic(
             pos=self.history.pos,
@@ -93,5 +92,9 @@ class WaveformGenerator:
         if hasattr(self, "stellar_profile"):
             self.stellar_profile.plot_grid(axes_dict["orbit"], zorder=-10)
 
-        plt.tight_layout()
-        plt.savefig(save_fname)
+        if save_dir is not None:
+            save_fname = f"{save_dir}/{self.label}.png"
+            plt.tight_layout()
+            plt.savefig(save_fname)
+        else:
+            return plt.gcf()

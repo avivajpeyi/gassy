@@ -6,7 +6,8 @@ import pandas as pd
 from astropy.constants import G, M_sun, R_sun, au, c, kpc
 from scipy.io import loadmat
 
-from gassy import constants
+M_sun = M_sun.si.value
+R_sun = R_sun.cgs.value
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 RE = "/profile(.*?).mat"
@@ -34,8 +35,8 @@ def read_profile(profile_name: str) -> pd.DataFrame:
     params = ["c_s", "q", "rho"]
     profile = {p: profile[p].flatten() for p in params}
     data = pd.DataFrame(profile)
-    data["c_s"] = (
-        data["c_s"] * 100
-    )  # convert to cgs (i think?) #TODO: check with evgeni
-    data["q"] = data["q"] * constants.R_sun  # convert to cgs
+    # standardise units?
+    data["c_s"] *= 100  # convert to m
+    data["q"] *= R_sun  # convert to m
+    data["rho"] *= 1000 / 100**3
     return data

@@ -42,9 +42,9 @@ class TestTwoBodyEvolver(unittest.TestCase):
         global CLEANUP
         CLEANUP = False
 
-        # zero_drag_system = create_two_body_system(**self.body_kwgs)
-        # two_body_evolver = Evolver(zero_drag_system, **self.evol_kwgs_slow)
-        # two_body_evolver.history.plot(f"{self.outdir}/zero_drag.png")
+        zero_drag_system = create_two_body_system(**self.body_kwgs)
+        two_body_evolver = Evolver(zero_drag_system, **self.evol_kwgs_slow)
+        two_body_evolver.history.plot(f"{self.outdir}/zero_drag.png")
 
         drag_system = create_two_body_system(drag_coeff=1e20, **self.body_kwgs)
         two_body_evolver = Evolver(drag_system, **self.evol_kwgs_slow)

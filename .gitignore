@@ -6,7 +6,8 @@ __pycache__/
 # C extensions
 *.so
 *.png
-
+*.DS_Store
+/test_plots/
 # Distribution / packaging
 .Python
 build/
