@@ -1,5 +1,5 @@
 % \documentclass[linenumbers,floatfix,ApJL,twocolumn]{aastex631}
-\documentclass[floatfix,ApJL,twocolumn]{aastex631}
+\documentclass[floatfix,ApJL, twocolumn]{aastex631}
 
 \input{style}
 \input{symbols}
@@ -11,7 +11,7 @@
 
 \begin{document}
 
-\title{Gravitational waveforms from CBC mergers in common envelope binaries}
+\title{LISA inference for a Red giant -- compact object common envelope binary Gravitational wave}
 
 \input{authors}
 
@@ -31,18 +31,85 @@ We present BLAH
 }
 
 
-\section{Introduction} \label{sec:intro}
+\section{Relavent papers} 
+\begin{itemize}
+    \item \cite{Ginat:2020:MNRAS}: GW waveform from CE signals (final-dynamical phase of a CE)
+    \item \cite{Renzo:2021:ApJ}: measuring GW from long-duration CE signals (looking at breaking index with pop-synth, no need for PE)
+    \item \cite{Raveh:2021:MNRAS}: GW from CO-inspiraling into massive star
+    \item \cite{Roepke:2022:arXiv}: review on simulations 
+    \item \cite{Ohlmann:2016:ApJL}: moving mesh simulation with LISA SNR
+    \item \cite{Wagg:2022:ApJ}: more pop-synth, can investigate CE 
+\end{itemize}
 
-General  info on
 
-The remainder of the paper is organised as follows.
+\section{Questions about CE}
+\begin{itemize}
+    \item Which systems manage to eject the CE? Efficency $\alpha$? 
+    \item What is the final orbital separation of the two stellar cores post-ejection?
+\end{itemize}
+
+
+\section{How can LISA help understand CE?}
+\subsection{Direct observations of CE-GW}
+Scenario with a giant red star (with compact core) primary doner and a CO secondary (close enough to inspiral).
+
+Due to the inspiral of the secondary CO into the primary star’s envelope, orbital energy, and angular momentum are transferred to the gas. Some material becomes unbound and is ejected from the system. Simulations, however, show that this process alone is inefficient and other energy sources \cite[e.g. ionization of envelope material][]{Roepke:2022:arXiv} are required for full ejection (a successful CE). 
+Failed CE ejection events may produce stronger GW signals (due to the plunge of CO). Measuring GW may help constrain some of the physics of the scenario. 
+
+
+\paragraph{\textbf{(i)Late-Inspiral phase:}}
+\cite{Ginat:2020:MNRAS} demos a parametrized description of CE inspiral,  predict about one detection in a \textbf{few centuries} with LISA. \cite{Ohlmann:2016:ApJL}'s simulations result in lower-SNR signals. 
+\textbf{This makes measuring late-inspiral GW signals from LISA not so promising}.
+
+\paragraph{\textbf{(ii)Earlier thermal-timescale phase:}}
+\cite{Renzo:2021:ApJ} runs some pop-synth, demos rate of $\sim0.1-100$ events during LISA mission, some of which are detectable (based on how close the stellar cores come). 
+
+
+
+\subsection{Indirect information from detecting post-CE sources}
+Assuming all isolated-stellar mass LISA sources have undergone a CE phase, a comparison of LISA populations with model predictions (eg \cite{Wagg:2022:ApJ}) can test CE physics. 
+LISA binary-population will be able to produce a detection rate as a function of orbital separation (after the CE phase). 
+
+
+
+\section{Introduction}\label{sec:intro}
+
+The remainder of the paper is organized as follows.
 Section~\ref{sec:method} outlines...
-Results are summarised in Section~\ref{sec:results}.
-The data products, and software to reproduce the results available online as supplementary materials (\projectUrl).
+Results are summarized in Section~\ref{sec:results}.
+The data products and software to reproduce the results available online as supplementary materials (\projectUrl).
 Finally, we discuss caveats and provide concluding remarks in Section~\ref{sec:conclusion}.
 
+
+
+
 \section{Method} \label{sec:method}
-Details on the method
+
+
+\textbf{1. Data generation:} Generate a range of inspirals:
+
+\begin{itemize}
+    \item Check distribution of Red giant + CO (WD/NS) mass, radii, the initial and final separation that undergoes CE 
+    \item Polytropic index of 1.5 
+    \item Vary masses of WD (0.6)/ NS (1.4) and doner using mass (3, 12), radii (10, 200), and separations (edge of star)
+    \item Inject into LISA noise
+\end{itemize}
+
+\textbf{2. Reduce order model:} Build waveform ROM
+
+\textbf{3. LISA Injection study:} inject signal, try to recover some parameters 
+
+
+
+
+
+
+
+
+
+
+
+
 
 \section{Results}\label{sec:results}
 Details on the results
