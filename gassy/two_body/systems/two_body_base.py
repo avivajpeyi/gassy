@@ -174,9 +174,7 @@ class TwoBodyBase:
     @property
     def eccentricity(self):
         """Eccentricity"""
-        return np.sqrt(
-            1 + 2 * self.Etot * self.L**2 / (G**2 * self.m**2 * self.Me**2)
-        )
+        return np.sqrt(1 + 2 * self.Etot * self.L**2 / (G**2 * self.m**2 * self.Me**2))
 
     @property
     def a(self):
