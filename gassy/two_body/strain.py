@@ -1,6 +1,7 @@
 """
 Calculates the gravitational strain for a binary system with a given mass ratio, initial separation, and initial velocity.
 """
+
 import numpy as np
 from numpy import cos, sin
 

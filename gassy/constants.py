@@ -1,4 +1,5 @@
 """constants in SI"""
+
 import numpy as np
 from astropy import units
 from astropy.constants import G, M_sun, R_sun, au, c, kpc
